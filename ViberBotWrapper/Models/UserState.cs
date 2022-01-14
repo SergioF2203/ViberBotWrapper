@@ -10,5 +10,7 @@ namespace ViberBotWebApp.Models
     {
         public string OpponentName { get; set; } = string.Empty;
         public State UState { get; set; }
+        public int Score { get; set; }
+        public int OpScore { get; set; }
     }
 }
