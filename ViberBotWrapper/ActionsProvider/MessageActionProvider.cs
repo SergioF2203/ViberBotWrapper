@@ -19,6 +19,7 @@ namespace ViberBotWebApp.ActionsProvider
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly StateManagerService _stateManager;
+        private readonly DatabaseController _dbController;
 
         public RequestProvider RequestProvider { get; set; }
 
@@ -27,6 +28,7 @@ namespace ViberBotWebApp.ActionsProvider
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _stateManager = stateManager;
+            _dbController = new(_configuration);
 
             RequestProvider = new(configuration, httpClientFactory);
         }
@@ -75,8 +77,6 @@ namespace ViberBotWebApp.ActionsProvider
                 _stateManager.AddPlayer(data.Sender.id);
             }
 
-            DatabaseController databaseController = new(_configuration);
-
             SendedMessage message = new()
             {
                 receiver = data.Sender.id,
@@ -100,7 +100,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
 
                     message.text = "Enter your oppenent name or get back: ";
-                    _stateManager.ChangeState(data.Sender.id, Enums.State.OpponentState);
+                    _stateManager.ChangeState(data.Sender.id, Enums.State.OpponentName);
 
                     message.keyboard = new()
                     {
@@ -175,7 +175,8 @@ namespace ViberBotWebApp.ActionsProvider
                 case "otto":
                 case "nove":
                 case "dieci":
-                    if (_stateManager.GetPlayerState(data.Sender.id) == "InGame")
+                    bool resultSaved = false;
+                    if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
                     {
                         int matchscore = 0;
                         int opScore = 11;
@@ -187,15 +188,26 @@ namespace ViberBotWebApp.ActionsProvider
                                 break;
                             }
                         }
-                        await databaseController.SaveResultToDb(new()
+                        resultSaved = true;
+                        await WriteResults(matchscore, opScore, data.Sender.id);
+                    }
+                    else if(_stateManager.GetPlayerState(data.Sender.id) == State.OpponentResult)
+                    {
+                        int matchscore = 11;
+                        int opScore = 0;
+                        foreach (var item in Enum.GetNames(typeof(Score)))
                         {
-                            PlayerId = data.Sender.id,
-                            OpponentName = _stateManager.GetOpponentName(data.Sender.id),
-                            Timestamp = HelperActions.GetUnixTimeStamp(DateTime.Now),
-                            Score = matchscore,
-                            OpScore = opScore
-                        });
-
+                            if (item == data.Message.Text)
+                            {
+                                opScore = (int)Enum.Parse(typeof(Score), item);
+                                break;
+                            }
+                        }
+                        resultSaved = true;
+                        await WriteResults(matchscore, opScore, data.Sender.id);
+                    }
+                    if (resultSaved)
+                    {
                         _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
                         message.text = "I have note your result";
                         message.keyboard = new()
@@ -207,10 +219,34 @@ namespace ViberBotWebApp.ActionsProvider
                                 Buttons.Buttons.Rematch(),
                                 Buttons.Buttons.Finish()
                             }
-                        }; 
+                        };
                     }
                     break;
                 case "undici":
+                    if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
+                    {
+                        _stateManager.ChangeState(data.Sender.id, State.OpponentResult);
+                        message.text = "What is opponent's result?";
+                        message.keyboard = new()
+                        {
+                            Type = "keyboard",
+                            DefaultHeight = false,
+                            Buttons = new()
+                            {
+                                Buttons.Buttons.Zero(),
+                                Buttons.Buttons.One(),
+                                Buttons.Buttons.Two(),
+                                Buttons.Buttons.Three(),
+                                Buttons.Buttons.Four(),
+                                Buttons.Buttons.Five(),
+                                Buttons.Buttons.Six(),
+                                Buttons.Buttons.Seven(),
+                                Buttons.Buttons.Eight(),
+                                Buttons.Buttons.Nine(),
+                                Buttons.Buttons.Ten()
+                            }
+                        };
+                    }
                     break;
 
                 case "rematch_again":
@@ -259,21 +295,7 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "game_result":
-                    message.text = "what is your result?";
-                    message.keyboard = new()
-                    {
-                        Type = "keyboard",
-                        DefaultHeight = false,
-                        Buttons = new()
-                        {
-                            Buttons.Buttons.Win(),
-                            Buttons.Buttons.Lose(),
-                        }
-                    };
-                    break;
-
-                case "winwin":
-                    message.text = "Congrats!! What oppenent score?";
+                    message.text = "What is your result?";
                     message.keyboard = new()
                     {
                         Type = "keyboard",
@@ -291,33 +313,7 @@ namespace ViberBotWebApp.ActionsProvider
                             Buttons.Buttons.Eight(),
                             Buttons.Buttons.Nine(),
                             Buttons.Buttons.Ten(),
-                            //Buttons.Buttons.Eleven()
-                        }
-                    };
-                    break;
-
-
-                case "loselose":
-                    message.text = "What your score?";
-                    break;
-                    message.keyboard = new()
-                    {
-                        Type = "keyboard",
-                        DefaultHeight = false,
-                        Buttons = new()
-                        {
-                            Buttons.Buttons.Zero(),
-                            Buttons.Buttons.One(),
-                            Buttons.Buttons.Two(),
-                            Buttons.Buttons.Three(),
-                            Buttons.Buttons.Four(),
-                            Buttons.Buttons.Five(),
-                            Buttons.Buttons.Six(),
-                            Buttons.Buttons.Seven(),
-                            Buttons.Buttons.Eight(),
-                            Buttons.Buttons.Nine(),
-                            Buttons.Buttons.Ten(),
-                            //Buttons.Buttons.Eleven()
+                            Buttons.Buttons.Eleven()
                         }
                     };
                     break;
@@ -346,14 +342,14 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         if (member.role == "admin" && member.id == data.Sender.id)
                         {
-                            message.text = $"there're {await databaseController.GetUsersCount()} of us already ...";
+                            message.text = $"there're {await _dbController.GetUsersCount()} of us already ...";
                         }
                     }
 
                     break;
 
                 default:
-                    if (_stateManager.GetPlayerState(data.Sender.id) == "OpponentState")
+                    if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentName)
                     {
                         message.text = "Deal!, I note your opponent's name";
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
@@ -388,6 +384,18 @@ namespace ViberBotWebApp.ActionsProvider
             }
 
             await RequestProvider.SendMessageRequest(message);
+        }
+
+        private async Task WriteResults(int playerScore, int opponentScore, string playerId)
+        {
+            await _dbController.SaveResultToDb(new()
+            {
+                PlayerId = playerId,
+                OpponentName = _stateManager.GetOpponentName(playerId),
+                Timestamp = HelperActions.GetUnixTimeStamp(DateTime.Now),
+                Score = playerScore,
+                OpScore = opponentScore
+            });
         }
     }
 }

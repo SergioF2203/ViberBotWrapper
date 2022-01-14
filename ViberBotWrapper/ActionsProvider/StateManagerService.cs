@@ -62,9 +62,9 @@ namespace ViberBotWebApp.ActionsProvider
             return false;
         }
 
-        public string GetPlayerState(string id)
+        public State GetPlayerState(string id)
         {
-            return UsersStates[id].UState.ToString();
+            return UsersStates[id].UState;
         }
 
         public string GetOpponentName(string id)
