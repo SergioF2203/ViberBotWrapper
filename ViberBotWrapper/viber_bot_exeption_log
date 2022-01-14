@@ -1,0 +1,11 @@
+Invalid attempt to read when no data is present.
+Cannot open server 'firstcustomserver' requested by the login. Client with IP address '188.163.97.202' is not allowed to access the server.  To enable access, use the Windows Azure Management Portal or run sp_set_firewall_rule on the master database to create a firewall rule for this IP address or address range.  It may take up to five minutes for this change to take effect.
+Cannot open server 'firstcustomserver' requested by the login. Client with IP address '188.163.97.202' is not allowed to access the server.  To enable access, use the Windows Azure Management Portal or run sp_set_firewall_rule on the master database to create a firewall rule for this IP address or address range.  It may take up to five minutes for this change to take effect.
+Cannot open server 'firstcustomserver' requested by the login. Client with IP address '188.163.97.202' is not allowed to access the server.  To enable access, use the Windows Azure Management Portal or run sp_set_firewall_rule on the master database to create a firewall rule for this IP address or address range.  It may take up to five minutes for this change to take effect.
+Cannot open server 'firstcustomserver' requested by the login. Client with IP address '80.77.35.17' is not allowed to access the server.  To enable access, use the Windows Azure Management Portal or run sp_set_firewall_rule on the master database to create a firewall rule for this IP address or address range.  It may take up to five minutes for this change to take effect.
+12/17/2021 10:12:21 AM: Column name or number of supplied values does not match table definition.
+12/17/2021 10:26:46 AM: The parameterized query '(@userid nvarchar(13),@name nvarchar(12),@avatar nvarchar(25),@c' expects the parameter '@subscribed', which was not supplied.
+12/17/2021 10:29:37 AM: The parameterized query '(@userid nvarchar(13),@name nvarchar(12),@avatar nvarchar(25),@c' expects the parameter '@subscribed', which was not supplied.
+1/3/2022 10:53:54 PM: Must declare the scalar variable "@opponent_name".
+1/3/2022 10:58:34 PM: Must declare the scalar variable "@opponent_name".
+1/3/2022 11:02:27 PM: Invalid object name 'Result'.
