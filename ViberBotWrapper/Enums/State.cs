@@ -7,10 +7,11 @@ namespace ViberBotWebApp.Enums
 {
     public enum State
     {
-        Added,
+        StandBy,
         InGame,
         MatchEnded,
-        OpponentState,
+        OpponentResult,
+        OpponentName,
         Statistics,
         Unstate
     }
