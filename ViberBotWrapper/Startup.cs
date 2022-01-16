@@ -92,7 +92,6 @@ namespace ViberBotWrapper
             httpClient.DefaultRequestHeaders.Add("X-Viber-Auth-Token", token);
 
             var result = await httpClient.PostAsync("https://chatapi.viber.com/pa/set_webhook", messageJSON);
-
         }
     }
 }

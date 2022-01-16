@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ViberBotWebApp.DAL.DbConnection;
@@ -96,8 +98,6 @@ namespace ViberBotWebApp.DAL
                 sqlCommand.CommandText = "SELECT COUNT (UserId) FROM Users";
 
                 userCount = (int)await sqlCommand.ExecuteScalarAsync();
-
-
             }
             catch (Exception ex)
             {
@@ -109,6 +109,131 @@ namespace ViberBotWebApp.DAL
             }
 
             return userCount;
+        }
+
+        public async Task<string> GetResults(string id)
+        {
+            var result = string.Empty;
+            try
+            {
+                _connection.Open();
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = $"SELECT * FROM Results WHERE UserId='{id}'";
+
+                var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
+
+                var stringRes = new StringBuilder();
+                while (dataReader.Read())
+                {
+                    stringRes.Append(dataReader.GetString(2));
+                    stringRes.Append(" - ");
+                    stringRes.Append(dataReader.GetByte(4).ToString());
+                    stringRes.Append('\n');
+                }
+
+                result = stringRes.ToString();
+            }
+            catch (Exception ex)
+            {
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
+        }
+
+        public async Task<string> GetPerfomance(string id)
+        {
+            var result = string.Empty;
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = $"SELECT * FROM Results WHERE UserId='{id}'";
+
+                var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
+
+                var playerScore = 0;
+                var opScore = 0;
+
+                while (dataReader.Read())
+                {
+                    playerScore += dataReader.GetByte(3);
+                    opScore += dataReader.GetByte(4);
+                }
+
+                result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
+        }
+
+        public async Task<string> GetPerfomanceDay(string id, DateTime day)
+        {
+            var result = string.Empty;
+            var nowDay = HelperActions.GetUnixTimeStamp(day);
+            var nextDay = HelperActions.GetUnixTimeStamp(day.AddDays(1).Date);
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = $"SELECT * FROM Results WHERE UserId='{id}' AND GameDate>{nowDay} AND GameDate<{nextDay}";
+
+                var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
+
+                var playerScore = 0;
+                var opScore = 0;
+
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        playerScore += dataReader.GetByte(3);
+                        opScore += dataReader.GetByte(4);
+                    }
+
+                    result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
+        }
+
+
+        public async Task<string> GetPerfomanceToday(string id)
+        {
+            return await GetPerfomanceDay(id, DateTime.Now);
         }
 
     }

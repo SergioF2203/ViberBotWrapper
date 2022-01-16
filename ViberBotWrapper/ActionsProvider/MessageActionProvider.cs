@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ViberBotWebApp.DAL;
@@ -248,7 +250,7 @@ namespace ViberBotWebApp.ActionsProvider
                                 buttons.Seven,
                                 buttons.Eight,
                                 buttons.Nine,
-                                buttons.Ten
+                                buttons.TenW
                             }
                         };
                     }
@@ -351,6 +353,44 @@ namespace ViberBotWebApp.ActionsProvider
                         }
                     }
 
+                    break;
+
+                case "getresults":
+                    var results = await _dbController.GetResults(data.Sender.id);
+                    if(!string.IsNullOrEmpty(results))
+                    {
+                        message.text = results;
+                    }
+                    break;
+
+                case "getplayerperfomance":
+                    var totalPerfomance = await _dbController.GetPerfomance(data.Sender.id);
+                    if (!string.IsNullOrEmpty(totalPerfomance))
+                    {
+                        message.text = $"Your perfomance is {totalPerfomance}";
+                    }
+                    else
+                    {
+                        message.text = "I have no data :(";
+                    }
+
+                    break;
+
+                case "getplayerperfomancetoday":
+                    var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                    break;
+
+                case "getperfomanceday":
+                    break;
+
+                case var date when new Regex(@"^(?:0?[1-9]|1[0-2])[./-](?:[012]?[0-9]|3[01])[./-](?:[0-9]{2}){1,2}$").IsMatch(date):
+                    message.text = $"Unfortunately I have no data for {date}";
+
+                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
+                    if (!string.IsNullOrEmpty(dayPerfomance))
+                    {
+                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
+                    }
                     break;
 
                 default:

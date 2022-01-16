@@ -13,6 +13,7 @@ namespace ViberBotWebApp.Enums
         OpponentResult,
         OpponentName,
         Statistics,
+        DayPerfomance,
         Unstate
     }
 

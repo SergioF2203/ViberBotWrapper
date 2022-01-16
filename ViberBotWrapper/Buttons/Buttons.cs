@@ -315,18 +315,21 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-        //public static Button TenW()
-        //{
-        //    return new()
-        //    {
-        //        ActionType = "reply",
-        //        ActionBody = "dieci",
-        //        Text = "<font color=\"#fefff6\">10</font>",
-        //        TextSize = "regular",
-        //        Columns = 3,
-        //        BgColor = "#735ff2"
-        //    };
-        //}
+        public Button TenW
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "dieci",
+                    Text = "<font color=\"#fefff6\">10</font>",
+                    TextSize = "regular",
+                    Columns = 6,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
 
         public Button Ten
         {
