@@ -74,6 +74,16 @@ namespace ViberBotWebApp.ActionsProvider
             return false;
         } 
 
+        public int GetCounterMatch(string id)
+        {
+            if (UsersStates.ContainsKey(id))
+            {
+                return UsersStates[id].Score;
+            }
+
+            return -1;
+        }
+
         public bool SetOpponentName(string id, string oppenentName)
         {
             if (UsersStates.ContainsKey(id))

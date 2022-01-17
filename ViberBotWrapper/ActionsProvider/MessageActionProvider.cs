@@ -258,7 +258,8 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "rematch_again":
-                    message.text = $"Do you want to play with {_stateManager.GetOpponentName(data.Sender.id)} again?";
+                    message.text = $"Played games: {_stateManager.GetCounterMatch(data.Sender.id)}\n" +
+                        $"Do you want to play with {_stateManager.GetOpponentName(data.Sender.id)} again?";
                     message.keyboard = new()
                     {
                         Type = "keyboard",
