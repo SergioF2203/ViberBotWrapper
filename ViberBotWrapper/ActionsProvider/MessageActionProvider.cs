@@ -386,7 +386,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "getperfomanceday":
                     break;
 
-                case var date when new Regex(@"^(?:0?[1-9]|1[0-2])[./-](?:[012]?[0-9]|3[01])[./-](?:[0-9]{2}){1,2}$").IsMatch(date):
+                case var date when DateTime.TryParse(date, out DateTime parser):
                     message.text = $"Unfortunately I have no data for {date}";
 
                     var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
