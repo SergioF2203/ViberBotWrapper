@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ViberBotWebApp.DAL;
@@ -17,7 +19,7 @@ namespace ViberBotWebApp.ActionsProvider
     public class MessageActionProvider
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
         private readonly StateManagerService _stateManager;
         private readonly DatabaseController _dbController;
 
@@ -26,9 +28,9 @@ namespace ViberBotWebApp.ActionsProvider
         public MessageActionProvider(IHttpClientFactory httpClientFactory, IConfiguration configuration, StateManagerService stateManager)
         {
             _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
+            //_configuration = configuration;
             _stateManager = stateManager;
-            _dbController = new(_configuration);
+            _dbController = new(configuration);
 
             RequestProvider = new(configuration, httpClientFactory);
         }
@@ -77,6 +79,9 @@ namespace ViberBotWebApp.ActionsProvider
                 _stateManager.AddPlayer(data.Sender.id);
             }
 
+            Buttons.Buttons buttons = new();
+
+
             SendedMessage message = new()
             {
                 receiver = data.Sender.id,
@@ -102,13 +107,14 @@ namespace ViberBotWebApp.ActionsProvider
                     message.text = "Enter your oppenent name or get back: ";
                     _stateManager.ChangeState(data.Sender.id, Enums.State.OpponentName);
 
+
                     message.keyboard = new()
                     {
                         Type = "keyboard",
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.MainMenu()
+                            buttons.MainMenu
                         }
                     };
 
@@ -122,8 +128,8 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.Perfomance(),
-                            Buttons.Buttons.WinRate()
+                            buttons.Perfomance,
+                            buttons.WinRate
                         }
                     };
 
@@ -139,9 +145,9 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.PerfomanceDay(),
-                            Buttons.Buttons.PerfomanceWeek(),
-                            Buttons.Buttons.PerfomanceMonth()
+                            buttons.PerfomanceDay,
+                            buttons.PerfomanceWeek,
+                            buttons.PerfomanceMonth
                         }
                     };
                     break;
@@ -154,8 +160,8 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.WinRateMatch(),
-                            Buttons.Buttons.WinRateSeries()
+                            buttons.WinRateMatch,
+                            buttons.WinRateSeries
                         }
                     };
                     break;
@@ -191,7 +197,7 @@ namespace ViberBotWebApp.ActionsProvider
                         resultSaved = true;
                         await WriteResults(matchscore, opScore, data.Sender.id);
                     }
-                    else if(_stateManager.GetPlayerState(data.Sender.id) == State.OpponentResult)
+                    else if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentResult)
                     {
                         int matchscore = 11;
                         int opScore = 0;
@@ -216,12 +222,13 @@ namespace ViberBotWebApp.ActionsProvider
                             DefaultHeight = false,
                             Buttons = new()
                             {
-                                Buttons.Buttons.Rematch(),
-                                Buttons.Buttons.Finish()
+                                buttons.Rematch,
+                                buttons.Finish
                             }
                         };
                     }
                     break;
+
                 case "undici":
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
                     {
@@ -233,17 +240,17 @@ namespace ViberBotWebApp.ActionsProvider
                             DefaultHeight = false,
                             Buttons = new()
                             {
-                                Buttons.Buttons.Zero(),
-                                Buttons.Buttons.One(),
-                                Buttons.Buttons.Two(),
-                                Buttons.Buttons.Three(),
-                                Buttons.Buttons.Four(),
-                                Buttons.Buttons.Five(),
-                                Buttons.Buttons.Six(),
-                                Buttons.Buttons.Seven(),
-                                Buttons.Buttons.Eight(),
-                                Buttons.Buttons.Nine(),
-                                Buttons.Buttons.Ten()
+                                buttons.Zero,
+                                buttons.One,
+                                buttons.Two,
+                                buttons.Three,
+                                buttons.Four,
+                                buttons.Five,
+                                buttons.Six,
+                                buttons.Seven,
+                                buttons.Eight,
+                                buttons.Nine,
+                                buttons.TenW
                             }
                         };
                     }
@@ -257,8 +264,8 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.Yes(),
-                            Buttons.Buttons.No()
+                            buttons.Yes,
+                            buttons.No
                         }
                     };
 
@@ -273,7 +280,7 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.Result(),
+                            buttons.Result,
                         }
                     };
                     break;
@@ -288,8 +295,8 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.Match(),
-                            Buttons.Buttons.Statistics()
+                            buttons.Match,
+                            buttons.Statistics
                         }
                     };
                     break;
@@ -302,27 +309,27 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new()
                         {
-                            Buttons.Buttons.Zero(),
-                            Buttons.Buttons.One(),
-                            Buttons.Buttons.Two(),
-                            Buttons.Buttons.Three(),
-                            Buttons.Buttons.Four(),
-                            Buttons.Buttons.Five(),
-                            Buttons.Buttons.Six(),
-                            Buttons.Buttons.Seven(),
-                            Buttons.Buttons.Eight(),
-                            Buttons.Buttons.Nine(),
-                            Buttons.Buttons.Ten(),
-                            Buttons.Buttons.Eleven()
+                            buttons.Zero,
+                            buttons.One,
+                            buttons.Two,
+                            buttons.Three,
+                            buttons.Four,
+                            buttons.Five,
+                            buttons.Six,
+                            buttons.Seven,
+                            buttons.Eight,
+                            buttons.Nine,
+                            buttons.Ten,
+                            buttons.Eleven
                         }
                     };
                     break;
 
                 case "#getallplayerstatus":
                     var accInfo = await RequestProvider.GetAccountInfo();
-                    foreach(var member in accInfo.members)
+                    foreach (var member in accInfo.members)
                     {
-                        if(member.role == "admin" && member.id == data.Sender.id)
+                        if (member.role == "admin" && member.id == data.Sender.id)
                         {
                             message.text = _stateManager.GetPlayersWStatus();
                             break;
@@ -332,7 +339,7 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         Type = "keyboard",
                         DefaultHeight = false,
-                        Buttons = new() { Buttons.Buttons.MainMenu() }
+                        Buttons = new() { buttons.MainMenu }
                     };
                     break;
 
@@ -348,6 +355,44 @@ namespace ViberBotWebApp.ActionsProvider
 
                     break;
 
+                case "getresults":
+                    var results = await _dbController.GetResults(data.Sender.id);
+                    if(!string.IsNullOrEmpty(results))
+                    {
+                        message.text = results;
+                    }
+                    break;
+
+                case "getplayerperfomance":
+                    var totalPerfomance = await _dbController.GetPerfomance(data.Sender.id);
+                    if (!string.IsNullOrEmpty(totalPerfomance))
+                    {
+                        message.text = $"Your perfomance is {totalPerfomance}";
+                    }
+                    else
+                    {
+                        message.text = "I have no data :(";
+                    }
+
+                    break;
+
+                case "getplayerperfomancetoday":
+                    var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                    break;
+
+                case "getperfomanceday":
+                    break;
+
+                case var date when new Regex(@"^(?:0?[1-9]|1[0-2])[./-](?:[012]?[0-9]|3[01])[./-](?:[0-9]{2}){1,2}$").IsMatch(date):
+                    message.text = $"Unfortunately I have no data for {date}";
+
+                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
+                    if (!string.IsNullOrEmpty(dayPerfomance))
+                    {
+                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
+                    }
+                    break;
+
                 default:
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentName)
                     {
@@ -361,7 +406,7 @@ namespace ViberBotWebApp.ActionsProvider
                             DefaultHeight = false,
                             Buttons = new()
                             {
-                                Buttons.Buttons.Result(),
+                                buttons.Result,
                             }
                         };
 
@@ -375,8 +420,8 @@ namespace ViberBotWebApp.ActionsProvider
                             DefaultHeight = false,
                             Buttons = new()
                             {
-                                Buttons.Buttons.Match(),
-                                Buttons.Buttons.Statistics()
+                                buttons.Match,
+                                buttons.Statistics
                             }
                         };
                     }
