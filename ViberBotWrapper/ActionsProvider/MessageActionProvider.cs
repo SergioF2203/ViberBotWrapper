@@ -181,6 +181,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "otto":
                 case "nove":
                 case "dieci":
+                    _stateManager.IncrementCounterMatch(data.Sender.id);
                     bool resultSaved = false;
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
                     {
@@ -257,7 +258,8 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "rematch_again":
-                    message.text = $"Do you want to play with {_stateManager.GetOpponentName(data.Sender.id)} again?";
+                    message.text = $"Played games: {_stateManager.GetCounterMatch(data.Sender.id)}\n" +
+                        $"Do you want to play with {_stateManager.GetOpponentName(data.Sender.id)} again?";
                     message.keyboard = new()
                     {
                         Type = "keyboard",
@@ -287,6 +289,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "no_no_no":
                 case "close_the_game":
+                    _stateManager.ResetCounterMatch(data.Sender.id);
                     message.text = "see you next time!";
                     _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
                     message.keyboard = new()
