@@ -233,7 +233,9 @@ namespace ViberBotWebApp.DAL
 
         public async Task<string> GetPerfomanceToday(string id)
         {
-            return await GetPerfomanceDay(id, DateTime.Now);
+            var fulldate = DateTime.Now.ToString();
+            var date = fulldate.Substring(0, fulldate.IndexOf(' '));
+            return await GetPerfomanceDay(id, DateTime.Parse(date));
         }
 
     }

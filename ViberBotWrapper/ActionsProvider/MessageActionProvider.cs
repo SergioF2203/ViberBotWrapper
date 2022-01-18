@@ -396,13 +396,14 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperfomancetoday":
-                    message.text = $"Unfortunately I have no data for {DateTime.Now}";
+                    var today = DateTime.Now.ToString().Substring(0, DateTime.Now.ToString().IndexOf(' '));
+                    message.text = $"Unfortunately I have no data for {today}";
 
                     var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
 
                     if (!string.IsNullOrEmpty(todayPerfomance))
                     {
-                        message.text = $"Your perfomance for {DateTime.Now} is {todayPerfomance}";
+                        message.text = $"Your perfomance for {today} is {todayPerfomance}";
                     }
 
                     message.keyboard = new()
