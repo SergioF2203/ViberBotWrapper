@@ -386,7 +386,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "getperfomanceday":
                     break;
 
-                case var date when DateTime.TryParse(date, out DateTime parser):
+                case var date when DateTime.TryParse(date, out DateTime _):
                     message.text = $"Unfortunately I have no data for {date}";
 
                     var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
