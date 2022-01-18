@@ -138,13 +138,29 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "perfomancestatistics":
-                    message.text = "What period is your choise?";
+                    message.text = "For the ... ?";
                     message.keyboard = new()
                     {
                         Type = "keyboard",
                         DefaultHeight = false,
                         Buttons = new()
                         {
+                            buttons.PerfomanceOpponent,
+                            buttons.PerfomancePeriod,
+                        }
+                    };
+                    break;
+
+                case "perfomanceopponentstatistics":
+                case "perfomanceperiodtstatistics":
+                    message.text = "For the period?";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.Today,
                             buttons.PerfomanceDay,
                             buttons.PerfomanceWeek,
                             buttons.PerfomanceMonth
@@ -380,7 +396,22 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperfomancetoday":
+                    message.text = $"Unfortunately I have no data for {DateTime.Now}";
+
                     var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+
+                    if (!string.IsNullOrEmpty(todayPerfomance))
+                    {
+                        message.text = $"Your perfomance for {DateTime.Now} is {todayPerfomance}";
+                    }
+
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new() { buttons.MainMenu }
+                    };
+
                     break;
 
                 case "getperfomanceday":
@@ -394,6 +425,15 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         message.text = $"Your perfomance for {date} is {dayPerfomance}";
                     }
+
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new() { buttons.MainMenu }
+                    };
+
+
                     break;
 
                 default:

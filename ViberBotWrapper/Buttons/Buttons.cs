@@ -15,7 +15,7 @@ namespace ViberBotWebApp.Buttons
                 return new()
                 {
                     ActionType = "reply",
-                    ActionBody = "daytoday",
+                    ActionBody = "getplayerperfomancetoday",
                     Text = "<font color=\"#fefff6\">\uD83D\uDCC6 Today</font>",
                     TextSize = "regular",
                     Columns = 6,
@@ -62,7 +62,7 @@ namespace ViberBotWebApp.Buttons
                 return new()
                 {
                     ActionType = "reply",
-                    ActionBody = "Statistics",
+                    ActionBody = "statistics",
                     Text = "<font color=\"#fefff6\">\uD83D\uDCC8 Statistics</font>",
                     TextSize = "regular",
                     Columns = 3,
@@ -167,7 +167,6 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
-
 
         public Button One
         {
@@ -347,7 +346,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-
         public Button Eleven
         {
             get
@@ -363,7 +361,6 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
-
 
         public Button Yes
         {
@@ -412,6 +409,40 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
+        public Button PerfomanceOpponent
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "perfomanceopponentstatistics",
+                    Text = "<font color=\"#fefff6\">For the Opponent Name</font>",
+                    TextSize = "regular",
+                    Columns = 3,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public Button PerfomancePeriod
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "perfomanceperiodtstatistics",
+                    Text = "<font color=\"#fefff6\">For the period</font>",
+                    TextSize = "regular",
+                    Columns = 3,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+
 
         public Button PerfomanceDay
         {
