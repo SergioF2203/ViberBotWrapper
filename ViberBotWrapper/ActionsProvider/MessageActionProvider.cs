@@ -152,6 +152,33 @@ namespace ViberBotWebApp.ActionsProvider
                     };
                     break;
 
+                case "perfomancedaystatistics":
+                    message.text = "Choose day.";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.Today,
+                            buttons.OtherDay
+                        }
+                    };
+                    break;
+
+                case "perfomancetoday":
+                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Today);
+                    if (!string.IsNullOrEmpty(dayPerfomance))
+                    {
+                        message.text = $"Your perfomance for today is {dayPerfomance}";
+                    }
+                    break;
+
+                case "perfomanceotherday":
+                    message.text = "Put the day";
+                    break;
+
+
                 case "winratestatistics":
                     message.text = "What WinRate do you want to know?";
                     message.keyboard = new()
@@ -389,10 +416,10 @@ namespace ViberBotWebApp.ActionsProvider
                 case var date when DateTime.TryParse(date, out DateTime _):
                     message.text = $"Unfortunately I have no data for {date}";
 
-                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
-                    if (!string.IsNullOrEmpty(dayPerfomance))
+                    var otherDayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
+                    if (!string.IsNullOrEmpty(otherDayPerfomance))
                     {
-                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
+                        message.text = $"Your perfomance for {date} is {otherDayPerfomance }";
                     }
                     break;
 
