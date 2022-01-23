@@ -57,23 +57,25 @@ namespace ViberBotWebApp.DAL
             }
         }
 
-        public async Task SaveResultToDb(MatchResult result)
+        public async Task<int> SaveResultToDb(MatchResult result)
         {
+            var rowAffected = 0;
             try
             {
                 _connection.Open();
 
                 SqlCommand sqlCommand = new();
                 sqlCommand.Connection = _connection;
-                sqlCommand.CommandText = "INSERT INTO Results VALUES (@userid, @datetime, @opponent_name, @score, @op_score)";
+                sqlCommand.CommandText = "INSERT INTO Results VALUES (@userid, @datetime, @opponent_name, @score, @op_score, @uid)";
 
                 sqlCommand.Parameters.Add(new SqlParameter("@userid", result.PlayerId));
                 sqlCommand.Parameters.Add(new SqlParameter("@datetime", result.Timestamp));
                 sqlCommand.Parameters.Add(new SqlParameter("@opponent_name", result.OpponentName));
                 sqlCommand.Parameters.Add(new SqlParameter("@score", result.Score));
                 sqlCommand.Parameters.Add(new SqlParameter("@op_score", result.OpScore));
+                sqlCommand.Parameters.Add(new SqlParameter("@uid", result.Id));
 
-                await sqlCommand.ExecuteNonQueryAsync();
+                rowAffected = await sqlCommand.ExecuteNonQueryAsync();
             }
             catch(Exception ex)
             {
@@ -84,6 +86,8 @@ namespace ViberBotWebApp.DAL
             {
                 _connection.Close();
             }
+
+            return rowAffected;
         }
 
         public async Task<int> GetUsersCount()
@@ -109,6 +113,42 @@ namespace ViberBotWebApp.DAL
             }
 
             return userCount;
+        }
+
+        public async Task<IEnumerable<string>> GetUserIds()
+        {
+            var userIds = new List<string>();
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = "SELECT UserId FROM Users";
+
+                var dataReader = sqlCommand.ExecuteReader();
+
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        userIds.Add(dataReader.GetString(0));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return userIds.ToArray();
         }
 
         public async Task<string> GetResults(string id)
@@ -230,7 +270,6 @@ namespace ViberBotWebApp.DAL
             return result;
         }
 
-
         public async Task<string> GetPerfomanceToday(string id)
         {
             var fulldate = DateTime.Now.ToString();
@@ -238,5 +277,61 @@ namespace ViberBotWebApp.DAL
             return await GetPerfomanceDay(id, DateTime.Parse(date));
         }
 
+        public async Task<string> GetWinRateUser(string id)
+        {
+            var winrate = string.Empty;
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = $"SELECT (SELECT CAST(COUNT(Score) AS float) as WIN FROM Results WHERE UserId='{id}' AND Score='11') * 100 / (SELECT CAST(COUNT(UserId) AS float) as TOTAL FROM Results WHERE UserId='{id}')";
+
+                winrate = sqlCommand.ExecuteScalar().ToString();
+
+            }
+            catch (Exception ex)
+            {
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return winrate;
+        }
+
+        public async Task<int> RemoveEntryById(string id)
+        {
+            var rowAffected = 0;
+            try
+            {
+                _connection.Open();
+
+                                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = "DELETE FROM Results WHERE Uid = @uid";
+
+                //sqlCommand.CommandText = "INSERT INTO Results VALUES (@userid, @datetime, @opponent_name, @score, @op_score, @uid)";
+
+                sqlCommand.Parameters.Add(new SqlParameter("@uid", id));
+
+                rowAffected = await sqlCommand.ExecuteNonQueryAsync();
+
+            }
+            catch (Exception ex)
+            {
+                var entry = DateTime.Now.ToString() + ": " + ex.Message;
+                await HelperActions.WriteToFile("viber_bot_exeption_log", entry);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return rowAffected;
+        }
     }
 }

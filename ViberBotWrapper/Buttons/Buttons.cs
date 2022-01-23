@@ -442,8 +442,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-
-
         public Button PerfomanceDay
         {
             get
@@ -492,7 +490,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-
         public Button WinRate
         {
             get
@@ -536,6 +533,22 @@ namespace ViberBotWebApp.Buttons
                     Text = "<font color=\"#fefff6\"> Series Win Rate</font>",
                     TextSize = "regular",
                     Columns = 3,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public Button EditLastMatch
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "editlastmatchresult",
+                    Text = "<font color=\"#fefff6\">\u270F Edit Last Result</font>",
+                    TextSize = "regular",
+                    Columns = 6,
                     BgColor = "#735ff2"
                 };
             }

@@ -91,7 +91,6 @@ namespace ViberBotWebApp.ActionsProvider
                     name = "PPBot",
                     avatar = "https://media-direct.cdn.viber.com/pg_download?pgtp=icons&dlid=0-04-01-9324f81f31813b3430b399241b48e4e4b1d0544d65401b8f4ac237e7a443df24&fltp=jpg&imsz=0000"
                 },
-                tracking_data = "trackingData",
                 type = "text",
                 text = "",
             };
@@ -199,6 +198,8 @@ namespace ViberBotWebApp.ActionsProvider
                 case "dieci":
                     _stateManager.IncrementCounterMatch(data.Sender.id);
                     bool resultSaved = false;
+                    var matchId = Guid.NewGuid().ToString();
+                    _stateManager.SetLastMatchId(data.Sender.id, matchId);
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
                     {
                         int matchscore = 0;
@@ -211,8 +212,13 @@ namespace ViberBotWebApp.ActionsProvider
                                 break;
                             }
                         }
-                        resultSaved = true;
-                        await WriteResults(matchscore, opScore, data.Sender.id);
+
+
+                        if (await WriteResults(matchscore, opScore, data.Sender.id, matchId))
+                            resultSaved = true;
+                        else
+                            resultSaved = false;
+
                     }
                     else if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentResult)
                     {
@@ -226,10 +232,14 @@ namespace ViberBotWebApp.ActionsProvider
                                 break;
                             }
                         }
-                        resultSaved = true;
-                        await WriteResults(matchscore, opScore, data.Sender.id);
+
+                        if (await WriteResults(matchscore, opScore, data.Sender.id, matchId))
+                            resultSaved = true;
+                        else
+                            resultSaved = false;
+
                     }
-                    if (resultSaved)
+                    if (resultSaved) 
                     {
                         _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
                         message.text = "I have note your result";
@@ -240,7 +250,23 @@ namespace ViberBotWebApp.ActionsProvider
                             Buttons = new()
                             {
                                 buttons.Rematch,
-                                buttons.Finish
+                                buttons.Finish,
+                                buttons.EditLastMatch
+                            }
+                        };
+                    }
+                    else
+                    {
+                        _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
+                        message.text = "Something went wrong while I've saved your reslut :(";
+                        message.keyboard = new()
+                        {
+                            Type = "keyboard",
+                            DefaultHeight = false,
+                            Buttons = new()
+                            {
+                                buttons.Match,
+                                buttons.Statistics
                             }
                         };
                     }
@@ -287,6 +313,33 @@ namespace ViberBotWebApp.ActionsProvider
                         }
                     };
 
+                    break;
+
+                case "editlastmatchresult":
+                    if (_stateManager.IsLastMatchId(data.Sender.id))
+                    {
+                        var rowaffected = 0;
+
+                        if(!string.IsNullOrEmpty(_stateManager.GetLastMatchId(data.Sender.id)))
+                            rowaffected = await _dbController.RemoveEntryById(_stateManager.GetLastMatchId(data.Sender.id));
+
+                        if(rowaffected is not 0)
+                            message.text = "I've removed your last result and you can enter new match result ... (like)";
+                        else
+                            message.text = "Something went wrong. (angrymark) Please to address to the admin ...";
+
+                        message.keyboard = new()
+                        {
+                            Type = "keyboard",
+                            DefaultHeight = false,
+                            Buttons = new()
+                            {
+                                buttons.Match,
+                                buttons.Statistics
+                            }
+                        };
+
+                    }
                     break;
 
                 case "yes_yes_yes":
@@ -376,10 +429,25 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "getresults":
                     var results = await _dbController.GetResults(data.Sender.id);
-                    if(!string.IsNullOrEmpty(results))
+                    if (!string.IsNullOrEmpty(results))
                     {
                         message.text = results;
                     }
+                    break;
+
+                case "broadcastcustommessage":
+                    var userIds = await _dbController.GetUserIds();
+
+                    message.broadcast_list = userIds;
+
+                    message.text = data.Message.Tracking_Data;
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new() { buttons.MainMenu }
+                    };
+
                     break;
 
                 case "getplayerperfomance":
@@ -418,6 +486,20 @@ namespace ViberBotWebApp.ActionsProvider
                 case "getperfomanceday":
                     break;
 
+                case "winratestatisticsmatch":
+                    var winrate = await _dbController.GetWinRateUser(data.Sender.id);
+                    var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
+                    message.text = $"Your Match WinRate is {winratePercent}%";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new() { buttons.MainMenu }
+                    };
+
+
+                    break;
+
                 case var date when DateTime.TryParse(date, out DateTime _):
                     message.text = $"Unfortunately I have no data for {date}";
 
@@ -433,7 +515,6 @@ namespace ViberBotWebApp.ActionsProvider
                         DefaultHeight = false,
                         Buttons = new() { buttons.MainMenu }
                     };
-
 
                     break;
 
@@ -475,16 +556,22 @@ namespace ViberBotWebApp.ActionsProvider
             await RequestProvider.SendMessageRequest(message);
         }
 
-        private async Task WriteResults(int playerScore, int opponentScore, string playerId)
+        private async Task<bool> WriteResults(int playerScore, int opponentScore, string playerId, string matchId)
         {
-            await _dbController.SaveResultToDb(new()
+            if (await _dbController.SaveResultToDb(new()
             {
+                Id = matchId,
                 PlayerId = playerId,
                 OpponentName = _stateManager.GetOpponentName(playerId),
                 Timestamp = HelperActions.GetUnixTimeStamp(DateTime.Now),
                 Score = playerScore,
                 OpScore = opponentScore
-            });
+            }) is not 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

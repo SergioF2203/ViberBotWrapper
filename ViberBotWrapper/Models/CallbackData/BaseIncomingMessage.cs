@@ -16,7 +16,6 @@ namespace ViberBotWebApp.Models.CallbackData
         public bool Subscribed { get; set; }
         public Sender Sender { get; set; }
         public Message Message { get; set; }
-        public string Tracking_Data { get; set; }
 
     }
 }
