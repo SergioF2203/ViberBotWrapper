@@ -272,21 +272,25 @@ namespace ViberBotWebApp.DAL
 
         public async Task<string> GetPerfomanceToday(string id)
         {
-            var fulldate = DateTime.Now.ToString();
-            var date = fulldate.Substring(0, fulldate.IndexOf(' '));
+            //var fulldate = DateTime.Now.ToString();
+            //var date = fulldate.Substring(0, fulldate.IndexOf(' '));
+
+            var date = HelperActions.GetShorthandDateTime(DateTime.Now);
             return await GetPerfomanceDay(id, DateTime.Parse(date));
         }
 
-        public async Task<string> GetWinRateUser(string id)
+        public async Task<string> GetWinRateUser(string id, DateTime date)
         {
             var winrate = string.Empty;
+            var shdate = HelperActions.GetUnixTimeStamp(DateTime.Parse(HelperActions.GetShorthandDateTime(date)));
+            
             try
             {
                 _connection.Open();
 
                 SqlCommand sqlCommand = new();
                 sqlCommand.Connection = _connection;
-                sqlCommand.CommandText = $"SELECT (SELECT CAST(COUNT(Score) AS float) as WIN FROM Results WHERE UserId='{id}' AND Score='11') * 100 / (SELECT CAST(COUNT(UserId) AS float) as TOTAL FROM Results WHERE UserId='{id}')";
+                sqlCommand.CommandText = $"SELECT (SELECT CAST(COUNT(Score) AS float) as WIN FROM Results WHERE UserId='{id}' AND Score='11' AND GameDate>{shdate}) * 100 / (SELECT CAST(COUNT(UserId) AS float) as TOTAL FROM Results WHERE UserId='{id}' AND GameDate>{shdate})";
 
                 winrate = sqlCommand.ExecuteScalar().ToString();
 

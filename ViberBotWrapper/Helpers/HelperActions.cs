@@ -27,5 +27,11 @@ namespace ViberBotWebApp.Helpers
         {
             return new DateTimeOffset(date).ToUnixTimeSeconds();
         }
+
+        public static string GetShorthandDateTime (DateTime dateTime)
+        {
+            var fulldate = dateTime.ToString();
+            return fulldate.Substring(0, fulldate.IndexOf(' '));
+        }
     }
 }

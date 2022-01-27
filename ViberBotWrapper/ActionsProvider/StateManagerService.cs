@@ -41,7 +41,7 @@ namespace ViberBotWebApp.ActionsProvider
             return false;
         }
 
-        public bool ChangeState(string id, State state)
+        public bool SetPlayerState(string id, State state)
         {
             if (UsersStates.ContainsKey(id))
             {
@@ -90,6 +90,16 @@ namespace ViberBotWebApp.ActionsProvider
             }
 
             return string.Empty;
+        }
+
+        public bool ResetLastMatchId(string playerId) 
+        {
+            if (UsersStates.ContainsKey(playerId))
+            {
+                UsersStates[playerId].LastMatchId = string.Empty;
+                return true;
+            }
+            return false;
         }
 
         public bool ResetCounterMatch(string id)
