@@ -18,6 +18,6 @@ namespace ViberBotWebApp.Enums
         otto,
         nove,
         dieci,
-        undici
+        //undici
     }
 }

@@ -63,6 +63,35 @@ namespace ViberBotWebApp.ActionsProvider
             return false;
         }
 
+        public bool SetLastMatchId(string playerid, string matchid)
+        {
+            if (UsersStates.ContainsKey(playerid))
+            {
+                UsersStates[playerid].LastMatchId = matchid;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsLastMatchId(string playerId)
+        {
+            if (UsersStates.ContainsKey(playerId))
+                return !string.IsNullOrEmpty(UsersStates[playerId].LastMatchId);
+
+            return false;
+        }
+
+        public string GetLastMatchId(string playerId)
+        {
+            if (UsersStates.ContainsKey(playerId))
+            {
+                return UsersStates[playerId].LastMatchId;
+            }
+
+            return string.Empty;
+        }
+
         public bool ResetCounterMatch(string id)
         {
             if (UsersStates.ContainsKey(id))
