@@ -18,8 +18,6 @@ namespace ViberBotWebApp.ActionsProvider
 {
     public class MessageActionProvider
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        //private readonly IConfiguration _configuration;
         private readonly StateManagerService _stateManager;
         private readonly DatabaseController _dbController;
 
@@ -27,8 +25,6 @@ namespace ViberBotWebApp.ActionsProvider
 
         public MessageActionProvider(IHttpClientFactory httpClientFactory, IConfiguration configuration, StateManagerService stateManager)
         {
-            _httpClientFactory = httpClientFactory;
-            //_configuration = configuration;
             _stateManager = stateManager;
             _dbController = new(configuration);
 
@@ -153,6 +149,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "perfomanceopponentstatistics":
                 case "perfomanceperiodtstatistics":
+                case "winrateperiodtstatistics":
                     message.text = "For the period?";
                     message.keyboard = new()
                     {
@@ -161,11 +158,41 @@ namespace ViberBotWebApp.ActionsProvider
                         Buttons = new()
                         {
                             buttons.Today,
-                            buttons.PerfomanceDay,
-                            buttons.PerfomanceWeek,
-                            buttons.PerfomanceMonth
+                            buttons.AllPeriod,
+                            buttons.Day,
+                            buttons.Week,
+                            buttons.Month
                         }
                     };
+                    break;
+
+                case "getpdaystatistics":
+                    message.text = "What the day your choise?";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.Today,
+                            buttons.TheDay
+                        }
+                    };
+
+                    break;
+
+                case "getcustomdaystatistics":
+                    message.text = "It's place where will be statistics for the custom day. You'll provide the date and I'll provide the data :)";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.MainMenu
+                        }
+                    };
+
                     break;
 
                 case "winratestatistics":
@@ -193,23 +220,6 @@ namespace ViberBotWebApp.ActionsProvider
                         {
                             buttons.WinrateOpponent,
                             buttons.WinratePeriod,
-                        }
-                    };
-                    break;
-
-                case "winrateperiodtstatistics":
-                    message.text = "For the period?";
-                    message.keyboard = new()
-                    {
-                        Type = "keyboard",
-                        DefaultHeight = false,
-                        Buttons = new()
-                        {
-                            buttons.Today,
-                            buttons.AllPeriod,
-                            buttons.Day,
-                            buttons.Week,
-                            buttons.Month
                         }
                     };
                     break;

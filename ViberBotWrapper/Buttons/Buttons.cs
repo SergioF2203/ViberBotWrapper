@@ -54,6 +54,23 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
+        public Button TheDay
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "getcustomdaystatistics",
+                    Text = "<font color=\"#fefff6\">The Day</font>",
+                    TextSize = "regular",
+                    Columns = 3,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
         public Button Week
         {
             get
