@@ -18,8 +18,6 @@ namespace ViberBotWebApp.ActionsProvider
 {
     public class MessageActionProvider
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        //private readonly IConfiguration _configuration;
         private readonly StateManagerService _stateManager;
         private readonly DatabaseController _dbController;
 
@@ -27,8 +25,6 @@ namespace ViberBotWebApp.ActionsProvider
 
         public MessageActionProvider(IHttpClientFactory httpClientFactory, IConfiguration configuration, StateManagerService stateManager)
         {
-            _httpClientFactory = httpClientFactory;
-            //_configuration = configuration;
             _stateManager = stateManager;
             _dbController = new(configuration);
 
@@ -104,7 +100,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
 
                     message.text = "Enter your oppenent name or get back: ";
-                    _stateManager.ChangeState(data.Sender.id, Enums.State.OpponentName);
+                    _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
 
 
                     message.keyboard = new()
@@ -132,11 +128,12 @@ namespace ViberBotWebApp.ActionsProvider
                         }
                     };
 
-                    _stateManager.ChangeState(data.Sender.id, State.Statistics);
+                    _stateManager.SetPlayerState(data.Sender.id, State.Statistics);
 
                     break;
 
                 case "perfomancestatistics":
+                    _stateManager.SetPlayerState(data.Sender.id, State.Perfomancestatics);
                     message.text = "For the ... ?";
                     message.keyboard = new()
                     {
@@ -152,6 +149,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "perfomanceopponentstatistics":
                 case "perfomanceperiodtstatistics":
+                case "winrateperiodtstatistics":
                     message.text = "For the period?";
                     message.keyboard = new()
                     {
@@ -160,15 +158,16 @@ namespace ViberBotWebApp.ActionsProvider
                         Buttons = new()
                         {
                             buttons.Today,
-                            buttons.PerfomanceDay,
-                            buttons.PerfomanceWeek,
-                            buttons.PerfomanceMonth
+                            buttons.AllPeriod,
+                            buttons.Day,
+                            buttons.Week,
+                            buttons.Month
                         }
                     };
                     break;
 
-                case "perfomancedaystatistics":
-                    message.text = "Choose day.";
+                case "getpdaystatistics":
+                    message.text = "What the day your choise?";
                     message.keyboard = new()
                     {
                         Type = "keyboard",
@@ -176,25 +175,28 @@ namespace ViberBotWebApp.ActionsProvider
                         Buttons = new()
                         {
                             buttons.Today,
-                            buttons.OtherDay
+                            buttons.TheDay
                         }
                     };
+
                     break;
 
-                case "perfomancetoday":
-                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Today);
-                    if (!string.IsNullOrEmpty(dayPerfomance))
+                case "getcustomdaystatistics":
+                    message.text = "It's place where will be statistics for the custom day. You'll provide the date and I'll provide the data :)";
+                    message.keyboard = new()
                     {
-                        message.text = $"Your perfomance for today is {dayPerfomance}";
-                    }
-                    break;
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.MainMenu
+                        }
+                    };
 
-                case "perfomanceotherday":
-                    message.text = "Put the day";
                     break;
-
 
                 case "winratestatistics":
+                    _stateManager.SetPlayerState(data.Sender.id, State.Winratestatistics);
                     message.text = "What WinRate do you want to know?";
                     message.keyboard = new()
                     {
@@ -204,6 +206,20 @@ namespace ViberBotWebApp.ActionsProvider
                         {
                             buttons.WinRateMatch,
                             buttons.WinRateSeries
+                        }
+                    };
+                    break;
+
+                case "winratestatisticsmatch":
+                    message.text = "For the ... ?";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new()
+                        {
+                            buttons.WinrateOpponent,
+                            buttons.WinratePeriod,
                         }
                     };
                     break;
@@ -266,9 +282,9 @@ namespace ViberBotWebApp.ActionsProvider
                             resultSaved = false;
 
                     }
-                    if (resultSaved) 
+                    if (resultSaved)
                     {
-                        _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
+                        _stateManager.SetPlayerState(data.Sender.id, State.MatchEnded);
                         message.text = "I have note your result";
                         message.keyboard = new()
                         {
@@ -284,7 +300,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
                     else
                     {
-                        _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
+                        _stateManager.SetPlayerState(data.Sender.id, State.MatchEnded);
                         message.text = "Something went wrong while I've saved your reslut :(";
                         message.keyboard = new()
                         {
@@ -302,7 +318,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "undici":
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.InGame)
                     {
-                        _stateManager.ChangeState(data.Sender.id, State.OpponentResult);
+                        _stateManager.SetPlayerState(data.Sender.id, State.OpponentResult);
                         message.text = "What is opponent's result?";
                         message.keyboard = new()
                         {
@@ -347,10 +363,10 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         var rowaffected = 0;
 
-                        if(!string.IsNullOrEmpty(_stateManager.GetLastMatchId(data.Sender.id)))
+                        if (!string.IsNullOrEmpty(_stateManager.GetLastMatchId(data.Sender.id)))
                             rowaffected = await _dbController.RemoveEntryById(_stateManager.GetLastMatchId(data.Sender.id));
 
-                        if(rowaffected is not 0)
+                        if (rowaffected is not 0 && _stateManager.ResetLastMatchId(data.Sender.id))
                             message.text = "I've removed your last result and you can enter new match result ... (like)";
                         else
                             message.text = "Something went wrong. (angrymark) Please to address to the admin ...";
@@ -371,7 +387,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "yes_yes_yes":
                     message.text = "Okay, I waiting the match result ...";
-                    _stateManager.ChangeState(data.Sender.id, State.InGame);
+                    _stateManager.SetPlayerState(data.Sender.id, State.InGame);
                     message.keyboard = new()
                     {
                         Type = "keyboard",
@@ -387,7 +403,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "close_the_game":
                     _stateManager.ResetCounterMatch(data.Sender.id);
                     message.text = "see you next time!";
-                    _stateManager.ChangeState(data.Sender.id, State.MatchEnded);
+                    _stateManager.SetPlayerState(data.Sender.id, State.MatchEnded);
                     message.keyboard = new()
                     {
                         Type = "keyboard",
@@ -490,15 +506,32 @@ namespace ViberBotWebApp.ActionsProvider
 
                     break;
 
-                case "getplayerperfomancetoday":
+                case "getplayerperstatisticstoday":
                     var today = DateTime.Now.ToString().Substring(0, DateTime.Now.ToString().IndexOf(' '));
                     message.text = $"Unfortunately I have no data for {today}";
 
-                    var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                    var state = _stateManager.GetPlayerState(data.Sender.id);
 
-                    if (!string.IsNullOrEmpty(todayPerfomance))
+                    var todayPerfomance = string.Empty;
+
+                    switch (state.ToString())
                     {
-                        message.text = $"Your perfomance for {today} is {todayPerfomance}";
+                        case "Winratestatistics":
+                            todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
+                            if (!string.IsNullOrEmpty(todayPerfomance)) {
+                                var winrate_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
+                                message.text = $"Today your win rate is {winrate_percent}%";
+                            }
+                            break;
+                        case "Perfomancestatics":
+                            todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            if (!string.IsNullOrEmpty(todayPerfomance))
+                            {
+                                var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
+                                message.text = $"Your perfomance for Today is {perfomance_percent}%";
+
+                            }
+                            break;
                     }
 
                     message.keyboard = new()
@@ -508,13 +541,15 @@ namespace ViberBotWebApp.ActionsProvider
                         Buttons = new() { buttons.MainMenu }
                     };
 
+                    _stateManager.SetPlayerState(data.Sender.id, State.Unstate);
+
                     break;
 
                 case "getperfomanceday":
                     break;
 
-                case "winratestatisticsmatch":
-                    var winrate = await _dbController.GetWinRateUser(data.Sender.id);
+                case "getplayerperstatisticsallperiod":
+                    var winrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
                     var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
                     message.text = $"Your Match WinRate is {winratePercent}%";
                     message.keyboard = new()
@@ -524,6 +559,18 @@ namespace ViberBotWebApp.ActionsProvider
                         Buttons = new() { buttons.MainMenu }
                     };
 
+                    break;
+
+                case "winratestatisticsmatchtoday":
+                    var winratetoday = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
+                    var winratePercentToday = winratetoday.Substring(0, winratetoday.IndexOf('.') + 3);
+                    message.text = $"Today, Your Match WinRate is {winratePercentToday}%";
+                    message.keyboard = new()
+                    {
+                        Type = "keyboard",
+                        DefaultHeight = false,
+                        Buttons = new() { buttons.MainMenu }
+                    };
 
                     break;
 
@@ -550,7 +597,7 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         message.text = "Deal!, I note your opponent's name";
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
-                        _stateManager.ChangeState(data.Sender.id, Enums.State.InGame);
+                        _stateManager.SetPlayerState(data.Sender.id, Enums.State.InGame);
 
                         message.keyboard = new()
                         {
