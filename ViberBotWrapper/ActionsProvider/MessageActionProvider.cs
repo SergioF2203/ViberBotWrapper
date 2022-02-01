@@ -154,7 +154,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "perfomanceopponentstatistics":
                 case "perfomanceperiodtstatistics":
-                case "winrateperiodtstatistics":
+                case "winratestatisticsperiod":
                     message.text = "For the period?";
                     //message.keyboard = new()
                     //{
@@ -604,6 +604,8 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperstatisticsallperiod":
+                    // TODO: check player state (implement method in UserState class)
+
                     var winrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
                     var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
                     message.text = $"Your Match WinRate is {winratePercent}%";
@@ -635,6 +637,8 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case var date when DateTime.TryParse(date, out DateTime _):
                     message.text = $"Unfortunately I have no data for {date}";
+
+                    // TODO: check th player state
 
                     var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
                     if (!string.IsNullOrEmpty(dayPerfomance))
