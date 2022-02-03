@@ -116,13 +116,16 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "perfomancestatistics":
-                    _stateManager.SetPlayerState(data.Sender.id, State.Perfomancestatics);
+                    _stateManager.SetPlayerState(data.Sender.id, State.PerfomanceStatics);
                     message.text = "For the ... ?";
 
                     message.keyboard = new(buttons.PerfomanceOpponent, buttons.PerfomancePeriod);
                     break;
 
                 case "perfomanceopponentstatistics":
+                    _stateManager.SetPlayerState(data.Sender.id, State.PerfomanceOpponentName);
+                    message.text = "Enter opponent name";
+                    break;
                 case "perfomanceperiodtstatistics":
                 case "winratestatisticsperiod":
                     message.text = "For the period?";
@@ -145,7 +148,7 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "winratestatistics":
-                    _stateManager.SetPlayerState(data.Sender.id, State.Winratestatistics);
+                    _stateManager.SetPlayerState(data.Sender.id, State.WinrateStatistics);
                     message.text = "What WinRate do you want to know?";
 
                     message.keyboard = new(buttons.WinRateMatch, buttons.WinRateSeries);
@@ -392,7 +395,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                     switch (state.ToString())
                     {
-                        case "Winratestatistics":
+                        case "WinrateStatistics":
                             todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
@@ -400,13 +403,21 @@ namespace ViberBotWebApp.ActionsProvider
                                 message.text = $"Today your win rate is {winrate_percent}%";
                             }
                             break;
-                        case "Perfomancestatics":
+                        case "PerfomanceStatics":
                             todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
-                                message.text = $"Your perfomance for Today is {perfomance_percent}%";
-
+                                message.text = $"Your perfomance for today is {perfomance_percent}%";
+                            }
+                            break;
+                        case "OpponentPerfomanceStatistics":
+                            var nameOpp = _stateManager.GetOpponentName(data.Sender.id);
+                            todayPerfomance = await _dbController.GetOpponentPerfomanceToday(nameOpp);
+                            if (!string.IsNullOrEmpty(todayPerfomance))
+                            {
+                                var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
+                                message.text = $"{nameOpp}'s perfomance for today is {perfomance_percent}%";
                             }
                             break;
                     }
@@ -461,13 +472,33 @@ namespace ViberBotWebApp.ActionsProvider
                 default:
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentName)
                     {
-                        message.text = "Deal!, I note your opponent's name";
+                        message.text = "Deal! I note your opponent's name";
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
-                        _stateManager.SetPlayerState(data.Sender.id, Enums.State.InGame);
+                        _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
                         message.keyboard = new(buttons.Result);
 
 
+                    }
+                    else if (_stateManager.GetPlayerState(data.Sender.id) == State.PerfomanceOpponentName)
+                    {
+                        _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
+                        _stateManager.SetPlayerState(data.Sender.id, State.OpponentPerfomanceStatistics);
+
+                        message.text = "Deal! I note your opponent's name. Choose a period.";
+                        message.keyboard = new()
+                        {
+                            Type = "keyboard",
+                            DefaultHeight = false,
+                            Buttons = new()
+                            {
+                                buttons.Today,
+                                buttons.AllPeriod,
+                                buttons.Day,
+                                buttons.Week,
+                                buttons.Month
+                            }
+                        };
                     }
                     else
                     {
