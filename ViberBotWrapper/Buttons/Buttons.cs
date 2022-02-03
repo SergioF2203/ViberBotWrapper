@@ -571,22 +571,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-        /*public Button Today
-        {
-            get
-            {
-                return new()
-                {
-                    ActionType = "reply",
-                    ActionBody = "perfomancetoday",
-                    Text = "<font color=\"#fefff6\">Today</font>",
-                    TextSize = "regular",
-                    Columns = 2,
-                    BgColor = "#735ff2"
-                };
-            }
-        }*/
-
         public Button Back
         {
             get
