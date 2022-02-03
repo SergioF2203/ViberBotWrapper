@@ -633,7 +633,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
                     if (!string.IsNullOrEmpty(dayPerfomance))
                     {
-                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
+                        message.text = $"Your perfomance for {date} is {otherDayPerfomance }";
                     }
 
                     //message.keyboard = new()

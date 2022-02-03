@@ -8,7 +8,7 @@ namespace ViberBotWebApp.Buttons
 {
     public class Buttons
     {
-        public Button Today
+        /*public Button Today
         {
             get
             {
@@ -564,6 +564,54 @@ namespace ViberBotWebApp.Buttons
                     ActionType = "reply",
                     ActionBody = "perfomancedaystatistics",
                     Text = "<font color=\"#fefff6\">Day</font>",
+                    TextSize = "regular",
+                    Columns = 2,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public Button Today
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "perfomancetoday",
+                    Text = "<font color=\"#fefff6\">Today</font>",
+                    TextSize = "regular",
+                    Columns = 2,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public Button Back
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "back",
+                    Text = "<font color=\"#fefff6\">Back</font>",
+                    TextSize = "regular",
+                    Columns = 3,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public Button OtherDay
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "perfomanceotherday",
+                    Text = "<font color=\"#fefff6\">Other day</font>",
                     TextSize = "regular",
                     Columns = 2,
                     BgColor = "#735ff2"
