@@ -399,7 +399,10 @@ namespace ViberBotWebApp.ActionsProvider
                             todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
-                                var winrate_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
+                                var lenght = todayPerfomance.IndexOf('.');
+                                lenght = lenght < 0 ? 0 : lenght;
+
+                                var winrate_percent = todayPerfomance.Substring(0, lenght + 3);
                                 message.text = $"Today your win rate is {winrate_percent}%";
                             }
                             break;
@@ -407,7 +410,10 @@ namespace ViberBotWebApp.ActionsProvider
                             todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
-                                var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
+                                var lenght = todayPerfomance.IndexOf('.');
+                                lenght = lenght < 0 ? 0 : lenght;
+
+                                var perfomance_percent = todayPerfomance.Substring(0, lenght + 3);
                                 message.text = $"Your perfomance for today is {perfomance_percent}%";
                             }
                             break;
