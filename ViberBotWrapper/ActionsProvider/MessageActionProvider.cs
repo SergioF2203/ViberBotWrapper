@@ -487,7 +487,8 @@ namespace ViberBotWebApp.ActionsProvider
                             buttons.Seven,
                             buttons.Eight,
                             buttons.Nine,
-                            buttons.TenW);
+                            buttons.Ten, 
+                            buttons.Eleven);
 
                     break;
 
@@ -588,12 +589,6 @@ namespace ViberBotWebApp.ActionsProvider
                             break;
                     }
 
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
                     message.keyboard = new(buttons.MainMenu);
 
                     _stateManager.SetPlayerState(data.Sender.id, State.Unstate);
@@ -624,12 +619,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var winratetoday = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
                     var winratePercentToday = winratetoday.Substring(0, winratetoday.IndexOf('.') + 3);
                     message.text = $"Today, Your Match WinRate is {winratePercentToday}%";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
+
                     message.keyboard = new(buttons.MainMenu);
 
 
