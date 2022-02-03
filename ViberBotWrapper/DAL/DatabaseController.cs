@@ -270,6 +270,51 @@ namespace ViberBotWebApp.DAL
             return result;
         }
 
+        public async Task<string> GetPerfomanceOpponentDay(string oppName, DateTime day)
+        {
+            var result = string.Empty;
+            var nowDay = HelperActions.GetUnixTimeStamp(day);
+            var nextDay = HelperActions.GetUnixTimeStamp(day.AddDays(1).Date);
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+                sqlCommand.CommandText = $"SELECT * FROM Results WHERE OpponentName='{oppName}' AND GameDate>{nowDay} AND GameDate<{nextDay}";
+
+                var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
+
+                var playerScore = 0;
+                var opScore = 0;
+
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        playerScore += dataReader.GetByte(3);
+                        opScore += dataReader.GetByte(4);
+                    }
+
+                    result = (opScore * 100 / (playerScore + opScore)).ToString() + "%";
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
+        }
+
         public async Task<string> GetPerfomanceToday(string id)
         {
             //var fulldate = DateTime.Now.ToString();
@@ -277,6 +322,12 @@ namespace ViberBotWebApp.DAL
 
             var date = HelperActions.GetShorthandDateTime(DateTime.Now);
             return await GetPerfomanceDay(id, DateTime.Parse(date));
+        }
+
+        public async Task<string> GetOpponentPerfomanceToday(string id)
+        {
+            var date = HelperActions.GetShorthandDateTime(DateTime.Now);
+            return await GetPerfomanceOpponentDay(id, DateTime.Parse(date));
         }
 
         public async Task<string> GetWinRateUser(string id, DateTime date)
@@ -306,6 +357,8 @@ namespace ViberBotWebApp.DAL
 
             return winrate;
         }
+
+
 
         public async Task<int> RemoveEntryById(string id)
         {

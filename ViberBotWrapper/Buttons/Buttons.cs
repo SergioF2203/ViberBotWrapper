@@ -8,7 +8,7 @@ namespace ViberBotWebApp.Buttons
 {
     public class Buttons
     {
-        /*public Button Today
+        public Button Today
         {
             get
             {
@@ -571,7 +571,7 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-        public Button Today
+        /*public Button Today
         {
             get
             {
@@ -585,7 +585,7 @@ namespace ViberBotWebApp.Buttons
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
         public Button Back
         {

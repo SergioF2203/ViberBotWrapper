@@ -16,7 +16,9 @@ namespace ViberBotWebApp.Enums
         DayPerfomance,
         Unstate,
         WinrateStatistics,
-        PerfomanceStatics
+        PerfomanceStatics,
+        PerfomanceOpponentName,
+        OpponentPerfomanceStatistics
     }
 
 }
