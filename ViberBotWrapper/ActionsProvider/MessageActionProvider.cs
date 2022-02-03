@@ -102,33 +102,12 @@ namespace ViberBotWebApp.ActionsProvider
                     message.text = "Enter your oppenent name or get back: ";
                     _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
 
-
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.MainMenu
-                    //    }
-                    //};
-
                     message.keyboard = new(buttons.MainMenu);
 
                     break;
 
                 case "statistics":
                     message.text = "What kind of statistics you want to know?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Perfomance,
-                    //        buttons.WinRate
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.Perfomance, buttons.WinRate);
 
@@ -139,16 +118,7 @@ namespace ViberBotWebApp.ActionsProvider
                 case "perfomancestatistics":
                     _stateManager.SetPlayerState(data.Sender.id, State.PerfomanceStatics);
                     message.text = "For the ... ?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.PerfomanceOpponent,
-                    //        buttons.PerfomancePeriod,
-                    //    }
-                    //};
+
                     message.keyboard = new(buttons.PerfomanceOpponent, buttons.PerfomancePeriod);
                     break;
 
@@ -159,35 +129,12 @@ namespace ViberBotWebApp.ActionsProvider
                 case "perfomanceperiodtstatistics":
                 case "winratestatisticsperiod":
                     message.text = "For the period?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Today,
-                    //        buttons.AllPeriod,
-                    //        buttons.Day,
-                    //        buttons.Week,
-                    //        buttons.Month
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.Today, buttons.AllPeriod, buttons.Day, buttons.Week, buttons.Month);
                     break;
 
                 case "getpdaystatistics":
                     message.text = "What the day your choise?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Today,
-                    //        buttons.TheDay
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.Today, buttons.TheDay);
 
@@ -195,15 +142,6 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "getcustomdaystatistics":
                     message.text = "It's place where will be statistics for the custom day. You'll provide the date and I'll provide the data :)";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.MainMenu
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.MainMenu);
 
@@ -212,32 +150,12 @@ namespace ViberBotWebApp.ActionsProvider
                 case "winratestatistics":
                     _stateManager.SetPlayerState(data.Sender.id, State.WinrateStatistics);
                     message.text = "What WinRate do you want to know?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.WinRateMatch,
-                    //        buttons.WinRateSeries
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.WinRateMatch, buttons.WinRateSeries);
                     break;
 
                 case "winratestatisticsmatch":
                     message.text = "For the ... ?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.WinrateOpponent,
-                    //        buttons.WinratePeriod,
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.WinRateOpponent, buttons.WinRatePeriod);
                     break;
@@ -320,16 +238,6 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         _stateManager.SetPlayerState(data.Sender.id, State.MatchEnded);
                         message.text = "Something went wrong while I've saved your reslut :(";
-                        //message.keyboard = new()
-                        //{
-                        //    Type = "keyboard",
-                        //    DefaultHeight = false,
-                        //    Buttons = new()
-                        //    {
-                        //        buttons.Match,
-                        //        buttons.Statistics
-                        //    }
-                        //};
 
                         message.keyboard = new(buttons.Match, buttons.Statistics);
                     }
@@ -340,25 +248,6 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         _stateManager.SetPlayerState(data.Sender.id, State.OpponentResult);
                         message.text = "What is opponent's result?";
-                        //message.keyboard = new()
-                        //{
-                        //    Type = "keyboard",
-                        //    DefaultHeight = false,
-                        //    Buttons = new()
-                        //    {
-                        //        buttons.Zero,
-                        //        buttons.One,
-                        //        buttons.Two,
-                        //        buttons.Three,
-                        //        buttons.Four,
-                        //        buttons.Five,
-                        //        buttons.Six,
-                        //        buttons.Seven,
-                        //        buttons.Eight,
-                        //        buttons.Nine,
-                        //        buttons.TenW
-                        //    }
-                        //};
 
                         message.keyboard = new(
                             buttons.Zero,
@@ -378,16 +267,6 @@ namespace ViberBotWebApp.ActionsProvider
                 case "rematch_again":
                     message.text = $"Played games: {_stateManager.GetCounterMatch(data.Sender.id)}\n" +
                         $"Do you want to play with {_stateManager.GetOpponentName(data.Sender.id)} again?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Yes,
-                    //        buttons.No
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.Yes, buttons.No);
 
@@ -406,16 +285,6 @@ namespace ViberBotWebApp.ActionsProvider
                         else
                             message.text = "Something went wrong. (angrymark) Please to address to the admin ...";
 
-                        //message.keyboard = new()
-                        //{
-                        //    Type = "keyboard",
-                        //    DefaultHeight = false,
-                        //    Buttons = new()
-                        //    {
-                        //        buttons.Match,
-                        //        buttons.Statistics
-                        //    }
-                        //};
 
                         message.keyboard = new(buttons.Match, buttons.Statistics);
 
@@ -425,15 +294,6 @@ namespace ViberBotWebApp.ActionsProvider
                 case "yes_yes_yes":
                     message.text = "Okay, I waiting the match result ...";
                     _stateManager.SetPlayerState(data.Sender.id, State.InGame);
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Result,
-                    //    }
-                    //};
 
                     message.keyboard = new(buttons.Result);
                     break;
@@ -443,42 +303,14 @@ namespace ViberBotWebApp.ActionsProvider
                     _stateManager.ResetCounterMatch(data.Sender.id);
                     message.text = "see you next time!";
                     _stateManager.SetPlayerState(data.Sender.id, State.MatchEnded);
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Match,
-                    //        buttons.Statistics
-                    //    }
-                    //};
+
                     message.keyboard = new(buttons.Match, buttons.Statistics);
 
                     break;
 
                 case "game_result":
                     message.text = "What is your result?";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new()
-                    //    {
-                    //        buttons.Zero,
-                    //        buttons.One,
-                    //        buttons.Two,
-                    //        buttons.Three,
-                    //        buttons.Four,
-                    //        buttons.Five,
-                    //        buttons.Six,
-                    //        buttons.Seven,
-                    //        buttons.Eight,
-                    //        buttons.Nine,
-                    //        buttons.Ten,
-                    //        buttons.Eleven
-                    //    }
-                    //};
+
                     message.keyboard = new(
                             buttons.Zero,
                             buttons.One,
@@ -505,12 +337,7 @@ namespace ViberBotWebApp.ActionsProvider
                             break;
                         }
                     }
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
+
                     message.keyboard = new(buttons.MainMenu);
                     break;
 
@@ -540,12 +367,7 @@ namespace ViberBotWebApp.ActionsProvider
                     message.broadcast_list = userIds;
 
                     message.text = data.Message.Tracking_Data;
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
+
                     message.keyboard = new(buttons.MainMenu);
 
                     break;
@@ -615,12 +437,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var winrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
                     var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
                     message.text = $"Your Match WinRate is {winratePercent}%";
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
+
                     message.keyboard = new(buttons.MainMenu);
 
 
@@ -644,15 +461,9 @@ namespace ViberBotWebApp.ActionsProvider
                     var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
                     if (!string.IsNullOrEmpty(dayPerfomance))
                     {
-                        message.text = $"Your perfomance for {date} is {otherDayPerfomance }";
+                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
                     }
 
-                    //message.keyboard = new()
-                    //{
-                    //    Type = "keyboard",
-                    //    DefaultHeight = false,
-                    //    Buttons = new() { buttons.MainMenu }
-                    //};
                     message.keyboard = new(buttons.MainMenu);
 
 
@@ -665,15 +476,6 @@ namespace ViberBotWebApp.ActionsProvider
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
                         _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
-                        //message.keyboard = new()
-                        //{
-                        //    Type = "keyboard",
-                        //    DefaultHeight = false,
-                        //    Buttons = new()
-                        //    {
-                        //        buttons.Result,
-                        //    }
-                        //};
                         message.keyboard = new(buttons.Result);
 
 
@@ -701,16 +503,7 @@ namespace ViberBotWebApp.ActionsProvider
                     else
                     {
                         message.text = "I have grown up and know a lot, but not that, sorry ... :(";
-                        //message.keyboard = new()
-                        //{
-                        //    Type = "keyboard",
-                        //    DefaultHeight = false,
-                        //    Buttons = new()
-                        //    {
-                        //        buttons.Match,
-                        //        buttons.Statistics
-                        //    }
-                        //};
+
                         message.keyboard = new(buttons.Match, buttons.Statistics);
                     }
                     break;
