@@ -438,13 +438,25 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperstatisticsallperiod":
-                    // TODO: check player state (implement method in UserState class)
+                    var senderId = data.Sender.id;
+                    if(_stateManager.GetPlayerState(senderId) == State.WinrateStatistics)
+                    {
+                        var winrate = await _dbController.GetWinRateUser(senderId, DateTime.Parse("1/1/2001"));
+                        var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
+                        message.text = $"Your Match *WinRate* for all period is {winratePercent}%";
 
-                    var winrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
-                    var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
-                    message.text = $"Your Match WinRate is {winratePercent}%";
+                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
 
-                    message.keyboard = new(buttons.MainMenu);
+                    }
+                    else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
+                    {
+                        var perfomance = await _dbController.GetPerfomance(senderId);
+                        var perfomancePercent = perfomance.Substring(0, perfomance.IndexOf('.') + 3);
+                        message.text = $"Your *perfomance* for all period is {perfomancePercent}%";
+
+                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
+                    }
+
 
 
                     break;
