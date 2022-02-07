@@ -209,7 +209,7 @@ namespace ViberBotWebApp.DAL
                     opScore += dataReader.GetByte(4);
                 }
 
-                result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+                result = (playerScore * 100 / (playerScore + opScore)).ToString();
 
             }
             catch (Exception ex)
@@ -252,7 +252,7 @@ namespace ViberBotWebApp.DAL
                         opScore += dataReader.GetByte(4);
                     }
 
-                    result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+                    result = (playerScore * 100 / (playerScore + opScore)).ToString();
                 }
 
 
@@ -317,9 +317,6 @@ namespace ViberBotWebApp.DAL
 
         public async Task<string> GetPerfomanceToday(string id)
         {
-            //var fulldate = DateTime.Now.ToString();
-            //var date = fulldate.Substring(0, fulldate.IndexOf(' '));
-
             var date = HelperActions.GetShorthandDateTime(DateTime.Now);
             return await GetPerfomanceDay(id, DateTime.Parse(date));
         }
@@ -357,8 +354,6 @@ namespace ViberBotWebApp.DAL
 
             return winrate;
         }
-
-
 
         public async Task<int> RemoveEntryById(string id)
         {
