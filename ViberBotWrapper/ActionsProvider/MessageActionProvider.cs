@@ -403,7 +403,7 @@ namespace ViberBotWebApp.ActionsProvider
                                 lenght = lenght < 0 ? 0 : lenght;
 
                                 var winrate_percent = todayPerfomance.Substring(0, lenght + 3);
-                                message.text = $"Today your win rate is {winrate_percent}%";
+                                message.text = $"Today your win rate is {todayPerfomance}%";
                             }
                             break;
                         case "PerfomanceStatics":
@@ -414,7 +414,7 @@ namespace ViberBotWebApp.ActionsProvider
                                 lenght = lenght < 0 ? 0 : lenght;
 
                                 var perfomance_percent = todayPerfomance.Substring(0, lenght + 3);
-                                message.text = $"Your perfomance for today is {perfomance_percent}%";
+                                message.text = $"Your perfomance for today is {todayPerfomance}%";
                             }
                             break;
                         case "OpponentPerfomanceStatistics":
