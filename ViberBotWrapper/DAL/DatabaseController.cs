@@ -241,8 +241,8 @@ namespace ViberBotWebApp.DAL
 
                 var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
 
-                var playerScore = 0;
-                var opScore = 0;
+                var playerScore = 0d;
+                var opScore = 0d;
 
                 if (dataReader.HasRows)
                 {

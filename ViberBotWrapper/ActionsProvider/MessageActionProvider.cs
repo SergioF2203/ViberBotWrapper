@@ -397,23 +397,29 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         case "WinrateStatistics":
                             todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
+                            var wrlenght = todayPerfomance.IndexOf('.');
+                            if (todayPerfomance.Length > 4)
+                                wrlenght = wrlenght < 0 ? 0 : wrlenght;
+                            else
+                                wrlenght = 1;
+
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
-                                var lenght = todayPerfomance.IndexOf('.');
-                                lenght = lenght < 0 ? 0 : lenght;
-
-                                var winrate_percent = todayPerfomance.Substring(0, lenght + 3);
+                                var winrate_percent = todayPerfomance.Substring(0, wrlenght + 3);
                                 message.text = $"Today your win rate is {winrate_percent}%";
                             }
                             break;
                         case "PerfomanceStatics":
                             todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            var prlenght = todayPerfomance.IndexOf('.');
+                            if (todayPerfomance.Length > 4)
+                                prlenght = prlenght < 0 ? 0 : prlenght;
+                            else
+                                prlenght = 1;
+
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
-                                var lenght = todayPerfomance.IndexOf('.');
-                                lenght = lenght < 0 ? 0 : lenght;
-
-                                var perfomance_percent = todayPerfomance.Substring(0, lenght + 3);
+                                var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
                                 message.text = $"Your perfomance for today is {perfomance_percent}%";
                             }
                             break;
@@ -428,7 +434,7 @@ namespace ViberBotWebApp.ActionsProvider
                             break;
                     }
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.MainMenu, buttons.Statistics);
 
                     _stateManager.SetPlayerState(data.Sender.id, State.Unstate);
 
