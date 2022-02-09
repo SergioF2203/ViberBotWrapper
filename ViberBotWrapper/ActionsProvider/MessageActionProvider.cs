@@ -93,13 +93,14 @@ namespace ViberBotWebApp.ActionsProvider
 
             switch (data.Message.Text.ToLower())
             {
+                case "no_no_no":
                 case "custom_match":
                     if (!_stateManager.IsExistPlayer(data.Sender.id))
                     {
                         _stateManager.AddPlayer(data.Sender.id);
                     }
 
-                    message.text = "Enter your oppenent name or get back: ";
+                    message.text = "Enter your opponent name or get back: ";
                     _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
 
                     message.keyboard = new(buttons.MainMenu);
@@ -295,10 +296,23 @@ namespace ViberBotWebApp.ActionsProvider
                     message.text = "Okay, I waiting the match result ...";
                     _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
-                    message.keyboard = new(buttons.Result);
+                    message.keyboard = new(
+                                buttons.Zero,
+                                buttons.One,
+                                buttons.Two,
+                                buttons.Three,
+                                buttons.Four,
+                                buttons.Five,
+                                buttons.Six,
+                                buttons.Seven,
+                                buttons.Eight,
+                                buttons.Nine,
+                                buttons.Ten,
+                                buttons.Eleven);
+
                     break;
 
-                case "no_no_no":
+                
                 case "close_the_game":
                     _stateManager.ResetCounterMatch(data.Sender.id);
                     message.text = "see you next time!";
@@ -322,9 +336,13 @@ namespace ViberBotWebApp.ActionsProvider
                             buttons.Seven,
                             buttons.Eight,
                             buttons.Nine,
-                            buttons.Ten, 
+                            buttons.Ten,
                             buttons.Eleven);
 
+                    break;
+
+                case "#resetmystate":
+                    _stateManager.SetPlayerState(data.Sender.id, State.StandBy);
                     break;
 
                 case "#getallplayerstatus":
@@ -407,9 +425,13 @@ namespace ViberBotWebApp.ActionsProvider
                             {
                                 var winrate_percent = todayPerfomance.Substring(0, wrlenght + 3);
                                 message.text = $"Today your win rate is {winrate_percent}%";
+
+                                // TODO: add comparsion with allPeriod winrate (use GetWinRate method)
                             }
                             break;
                         case "PerfomanceStatics":
+                            // TODO: refactor GetPerfomanceToday to GetPerfomance with date as parameter
+
                             todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
                             var prlenght = todayPerfomance.IndexOf('.');
                             if (todayPerfomance.Length > 4)
@@ -421,6 +443,8 @@ namespace ViberBotWebApp.ActionsProvider
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
                                 message.text = $"Your perfomance for today is {perfomance_percent}%";
+
+                                // TODO: add comparsion with allperiod perfomance (use GetPerfomance method)
                             }
                             break;
                         case "OpponentPerfomanceStatistics":
@@ -445,7 +469,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                 case "getplayerperstatisticsallperiod":
                     var senderId = data.Sender.id;
-                    if(_stateManager.GetPlayerState(senderId) == State.WinrateStatistics)
+                    if (_stateManager.GetPlayerState(senderId) == State.WinrateStatistics)
                     {
                         var winrate = await _dbController.GetWinRateUser(senderId, DateTime.Parse("1/1/2001"));
                         var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
@@ -496,11 +520,23 @@ namespace ViberBotWebApp.ActionsProvider
                 default:
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentName)
                     {
-                        message.text = "Deal! I note your opponent's name";
+                        message.text = "Deal! I note your opponent's name and waiting your result ...";
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
                         _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
-                        message.keyboard = new(buttons.Result);
+                        message.keyboard = new(
+                            buttons.Zero,
+                            buttons.One,
+                            buttons.Two,
+                            buttons.Three,
+                            buttons.Four,
+                            buttons.Five,
+                            buttons.Six,
+                            buttons.Seven,
+                            buttons.Eight,
+                            buttons.Nine,
+                            buttons.Ten,
+                            buttons.Eleven);
 
 
                     }
