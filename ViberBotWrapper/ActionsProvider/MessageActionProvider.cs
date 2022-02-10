@@ -100,10 +100,9 @@ namespace ViberBotWebApp.ActionsProvider
                         _stateManager.AddPlayer(data.Sender.id);
                     }
 
-                    message.text = "Enter your opponent name of select bellow or get back: ";
+                    message.text = "Enter your opponent name of select bellow or get back:\n";
+                    message.text += $"Your state is: {_stateManager.GetPlayerState(data.Sender.id)}";
                     _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
-
-                    // TODO: implement named buttons (4) 
 
                     var opponentsName = _dbController.GetLastOpponentName(data.Sender.id).Result;
                     var buttonsList = new List<Button>();
@@ -419,42 +418,33 @@ namespace ViberBotWebApp.ActionsProvider
 
                     var state = _stateManager.GetPlayerState(data.Sender.id);
 
-                    var todayPerfomance = string.Empty;
 
                     switch (state.ToString())
                     {
                         case "WinrateStatistics":
-                            todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
-                            var wrlenght = todayPerfomance.IndexOf('.');
-                            if (todayPerfomance.Length > 4)
-                                wrlenght = wrlenght < 0 ? 0 : wrlenght;
-                            else
-                                wrlenght = 1;
-
-                            if (!string.IsNullOrEmpty(todayPerfomance))
+                            var todayWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
+                            var totalWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
+                            var wrlenght = todayWinrate.IndexOf('.');
+                            var wrTotalLenght = totalWinrate.IndexOf('.');
+                            if (!string.IsNullOrEmpty(todayWinrate))
                             {
-                                var winrate_percent = todayPerfomance.Substring(0, wrlenght + 3);
-                                message.text = $"Today your win rate is {winrate_percent}%";
-
-                                // TODO: add comparsion with allPeriod winrate (use GetWinRate method)
+                                var winrate_percent = todayWinrate.Substring(0, wrlenght + 3);
+                                var totalwinrate_percent = totalWinrate.Substring(0, wrTotalLenght + 3);
+                                message.text = $"Today your winrate is *{winrate_percent}%*\nAnd your winrate for all period is *{totalwinrate_percent}%*";
                             }
                             break;
                         case "PerfomanceStatics":
                             // TODO: refactor GetPerfomanceToday to GetPerfomance with date as parameter
 
-                            todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            var allPeriodPerfomance = await _dbController.GetPerfomance(data.Sender.id);
                             var prlenght = todayPerfomance.IndexOf('.');
-                            if (todayPerfomance.Length > 4)
-                                prlenght = prlenght < 0 ? 0 : prlenght;
-                            else
-                                prlenght = 1;
-
+                            var allPeriodPerfLenght = allPeriodPerfomance.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
-                                message.text = $"Your perfomance for today is {perfomance_percent}%";
-
-                                // TODO: add comparsion with allperiod perfomance (use GetPerfomance method)
+                                var allperfomance_percent = allPeriodPerfomance.Substring(0, allPeriodPerfLenght + 3);
+                                message.text = $"Your perfomance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{perfomance_percent}%*";
                             }
                             break;
                         case "OpponentPerfomanceStatistics":

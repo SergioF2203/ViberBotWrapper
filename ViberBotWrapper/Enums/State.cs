@@ -19,7 +19,6 @@ namespace ViberBotWebApp.Enums
         PerfomanceStatics,
         PerfomanceOpponentName,
         OpponentPerfomanceStatistics,
-        Perfomancestatics,
         PerfomanceByOpName,
         WinrateByOpName,
         PerfomanceCustomDate,
