@@ -763,8 +763,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-
-
         public Button EditLastMatch
         {
             get
@@ -780,5 +778,19 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
+        public static Button CustomButton (string text, int size)
+        {
+            return new()
+            {
+                ActionType = "reply",
+                ActionBody = text,
+                Text = $"<font color=\"#fefff6\">{text}</font>",
+                TextSize = "regular",
+                Columns = size,
+                BgColor = "#735ff2"
+            };
+        }
+
     }
 }
