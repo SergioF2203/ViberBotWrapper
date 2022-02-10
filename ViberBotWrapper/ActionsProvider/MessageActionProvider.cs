@@ -100,10 +100,20 @@ namespace ViberBotWebApp.ActionsProvider
                         _stateManager.AddPlayer(data.Sender.id);
                     }
 
-                    message.text = "Enter your opponent name or get back: ";
+                    message.text = "Enter your opponent name of select bellow or get back: ";
                     _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
 
-                    message.keyboard = new(buttons.MainMenu);
+                    // TODO: implement named buttons (4) 
+
+                    var opponentsName = _dbController.GetLastOpponentName(data.Sender.id).Result;
+                    var buttonsList = new List<Button>();
+                    foreach(var name in opponentsName)
+                    {
+                        var temp = Buttons.Buttons.CustomButton(name, 6);
+                        buttonsList.Add(temp);
+                    }
+                    buttonsList.Add(buttons.MainMenu);
+                    message.keyboard = new(buttonsList.ToArray());
 
                     break;
 

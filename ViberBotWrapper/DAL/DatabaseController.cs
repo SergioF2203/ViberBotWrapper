@@ -385,5 +385,41 @@ namespace ViberBotWebApp.DAL
 
             return rowAffected;
         }
+
+        public async Task<List<string>> GetLastOpponentName(string id)
+        {
+            var result = new List<string>();
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+
+                sqlCommand.CommandText = $"SELECT DISTINCT TOP 4 OpponentName FROM Results WHERE UserId='{id}'";
+
+                var reader = sqlCommand.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(0));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
+        }
     }
 }
