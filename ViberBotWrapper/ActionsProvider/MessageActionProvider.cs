@@ -142,7 +142,8 @@ namespace ViberBotWebApp.ActionsProvider
                 case "winratestatisticsperiod":
                     message.text = "For the period?";
 
-                    message.keyboard = new(buttons.Today, buttons.AllPeriod, buttons.Day, buttons.Week, buttons.Month);
+                    //message.keyboard = new(buttons.Today, buttons.AllPeriod, buttons.Day, buttons.Week, buttons.Month);
+                    message.keyboard = new(buttons.PeriodKeyboard.ToArray());
                     break;
 
                 case "getpdaystatistics":
@@ -162,7 +163,7 @@ namespace ViberBotWebApp.ActionsProvider
                     else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
                     {
                         _stateManager.SetPlayerState(senderId, State.PerfomanceDay);
-                        winrwteOrPerfomanceText = "*Perfomance*";
+                        winrwteOrPerfomanceText = "*Performance*";
                     }
                     message.text = $"Please enter the date (mm/dd/yyyy pattern) you want to know your {winrwteOrPerfomanceText}";
 
@@ -416,7 +417,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var totalPerfomance = await _dbController.GetPerfomance(data.Sender.id);
                     if (!string.IsNullOrEmpty(totalPerfomance))
                     {
-                        message.text = $"Your perfomance is {totalPerfomance}";
+                        message.text = $"Your performance is {totalPerfomance}";
                     }
                     else
                     {
@@ -457,7 +458,7 @@ namespace ViberBotWebApp.ActionsProvider
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
                                 var allperfomance_percent = allPeriodPerfomance.Substring(0, allPeriodPerfLenght + 3);
-                                message.text = $"Your perfomance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{perfomance_percent}%*";
+                                message.text = $"Your performance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{perfomance_percent}%*";
                             }
                             break;
                         case "OpponentPerfomanceStatistics":
@@ -466,7 +467,7 @@ namespace ViberBotWebApp.ActionsProvider
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
-                                message.text = $"{nameOpp}'s perfomance for today is {perfomance_percent}%";
+                                message.text = $"{nameOpp}'s performance for today is {perfomance_percent}%";
                             }
                             break;
                     }
@@ -494,7 +495,7 @@ namespace ViberBotWebApp.ActionsProvider
                     {
                         var perfomance = await _dbController.GetPerfomance(senderId);
                         var perfomancePercent = perfomance.Substring(0, perfomance.IndexOf('.') + 3);
-                        message.text = $"Your *perfomance* for all period is {perfomancePercent}%";
+                        message.text = $"Your *performance* for all period is {perfomancePercent}%";
 
                         message.keyboard = new(buttons.MainMenu, buttons.Statistics);
                     }
@@ -534,7 +535,7 @@ namespace ViberBotWebApp.ActionsProvider
                         {
                             var perfomaneResultPercent = dayPerfomance.Substring(0, dayPerfomance.IndexOf('.') + 3);
 
-                            text = $"Your *Perfomance* for {shandDate} is {dayPerfomance}";
+                            text = $"Your *Performance* for {shandDate} is {perfomaneResultPercent}%";
                         }
                     }
 
