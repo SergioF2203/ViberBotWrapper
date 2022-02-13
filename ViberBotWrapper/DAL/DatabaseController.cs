@@ -345,6 +345,7 @@ namespace ViberBotWebApp.DAL
             }
             catch (Exception ex)
             {
+                // TODO: exception divide by zero == wrong date format
                 await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
             }
             finally
