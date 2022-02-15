@@ -49,7 +49,7 @@ namespace ViberBotWebApp.Buttons
                     ActionBody = "getpdaystatistics",
                     Text = "<font color=\"#fefff6\">Day</font>",
                     TextSize = "regular",
-                    Columns = 2,
+                    Columns = 3,
                     BgColor = "#735ff2"
                 };
             }
@@ -482,7 +482,7 @@ namespace ViberBotWebApp.Buttons
                 {
                     ActionType = "reply",
                     ActionBody = "perfomancestatistics",
-                    Text = "<font color=\"#fefff6\">\uD83C\uDFAF Perfomance</font>",
+                    Text = "<font color=\"#fefff6\">\uD83C\uDFAF Performance</font>",
                     TextSize = "regular",
                     Columns = 3,
                     BgColor = "#735ff2"
@@ -531,22 +531,6 @@ namespace ViberBotWebApp.Buttons
                     ActionType = "reply",
                     ActionBody = "winrateopponentstatistics",
                     Text = "<font color=\"#fefff6\">For the Opponent Name</font>",
-                    TextSize = "regular",
-                    Columns = 3,
-                    BgColor = "#735ff2"
-                };
-            }
-        }
-
-        public Button WinratePeriod
-        {
-            get
-            {
-                return new()
-                {
-                    ActionType = "reply",
-                    ActionBody = "winrateperiodtstatistics",
-                    Text = "<font color=\"#fefff6\">For the period</font>",
                     TextSize = "regular",
                     Columns = 3,
                     BgColor = "#735ff2"
@@ -739,7 +723,7 @@ namespace ViberBotWebApp.Buttons
                 {
                     ActionType = "reply",
                     ActionBody = "winratestatisticsoppenent",
-                    Text = "<font color=\"#fefff6\">Win Rate For Oppeonent</font>",
+                    Text = "<font color=\"#fefff6\">For Opponent</font>",
                     TextSize = "regular",
                     Columns = 3,
                     BgColor = "#735ff2"
@@ -755,15 +739,13 @@ namespace ViberBotWebApp.Buttons
                 {
                     ActionType = "reply",
                     ActionBody = "winratestatisticsperiod",
-                    Text = "<font color=\"#fefff6\">Win Rate For the Period</font>",
+                    Text = "<font color=\"#fefff6\">For the Period</font>",
                     TextSize = "regular",
                     Columns = 3,
                     BgColor = "#735ff2"
                 };
             }
         }
-
-
 
         public Button EditLastMatch
         {
@@ -780,5 +762,51 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
+        public Button Year
+        {
+            get
+            {
+                return new()
+                {
+                    ActionType = "reply",
+                    ActionBody = "statisticsyear",
+                    Text = "<font color=\"#fefff6\">Year</font>",
+                    TextSize = "regular",
+                    Columns = 2,
+                    BgColor = "#735ff2"
+                };
+            }
+        }
+
+        public static Button CustomButton(string text, int size)
+        {
+            return new()
+            {
+                ActionType = "reply",
+                ActionBody = text,
+                Text = $"<font color=\"#fefff6\">{text}</font>",
+                TextSize = "regular",
+                Columns = size,
+                BgColor = "#735ff2"
+            };
+        }
+
+        public IEnumerable<Button> PeriodKeyboard
+        {
+            get
+            {
+                var btn = new Buttons();
+                return new List<Button>() {
+                    btn.AllPeriod,
+                    btn.Day,
+                    btn.Week,
+                    btn.Month,
+                    btn.Year
+                };
+
+            }
+        }
+
     }
 }

@@ -77,7 +77,6 @@ namespace ViberBotWebApp.ActionsProvider
 
             Buttons.Buttons buttons = new();
 
-
             SendedMessage message = new()
             {
                 receiver = data.Sender.id,
@@ -91,18 +90,30 @@ namespace ViberBotWebApp.ActionsProvider
                 text = "",
             };
 
+            var senderId = data.Sender.id;
+
             switch (data.Message.Text.ToLower())
             {
+                case "no_no_no":
                 case "custom_match":
                     if (!_stateManager.IsExistPlayer(data.Sender.id))
                     {
                         _stateManager.AddPlayer(data.Sender.id);
                     }
 
-                    message.text = "Enter your oppenent name or get back: ";
+                    message.text = "Enter your opponent name of select bellow or get back:\n";
+                    message.text += $"Your state is: {_stateManager.GetPlayerState(data.Sender.id)}";
                     _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
 
-                    message.keyboard = new(buttons.MainMenu);
+                    var opponentsName = _dbController.GetLastOpponentName(data.Sender.id).Result;
+                    var buttonsList = new List<Button>();
+                    foreach (var name in opponentsName)
+                    {
+                        var temp = Buttons.Buttons.CustomButton(name, 6);
+                        buttonsList.Add(temp);
+                    }
+                    buttonsList.Add(buttons.MainMenu);
+                    message.keyboard = new(buttonsList.ToArray());
 
                     break;
 
@@ -126,11 +137,13 @@ namespace ViberBotWebApp.ActionsProvider
                     _stateManager.SetPlayerState(data.Sender.id, State.PerfomanceOpponentName);
                     message.text = "Enter opponent name";
                     break;
+
                 case "perfomanceperiodtstatistics":
                 case "winratestatisticsperiod":
                     message.text = "For the period?";
 
-                    message.keyboard = new(buttons.Today, buttons.AllPeriod, buttons.Day, buttons.Week, buttons.Month);
+                    //message.keyboard = new(buttons.Today, buttons.AllPeriod, buttons.Day, buttons.Week, buttons.Month);
+                    message.keyboard = new(buttons.PeriodKeyboard.ToArray());
                     break;
 
                 case "getpdaystatistics":
@@ -141,7 +154,18 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getcustomdaystatistics":
-                    message.text = "It's place where will be statistics for the custom day. You'll provide the date and I'll provide the data :)";
+                    var winrwteOrPerfomanceText = "";
+                    if (_stateManager.GetPlayerState(senderId) == State.WinrateStatistics)
+                    {
+                        _stateManager.SetPlayerState(senderId, State.WinrateDay);
+                        winrwteOrPerfomanceText = "*WinRate*";
+                    }
+                    else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
+                    {
+                        _stateManager.SetPlayerState(senderId, State.PerfomanceDay);
+                        winrwteOrPerfomanceText = "*Performance*";
+                    }
+                    message.text = $"Please enter the date (mm/dd/yyyy pattern) you want to know your {winrwteOrPerfomanceText}";
 
                     message.keyboard = new(buttons.MainMenu);
 
@@ -295,10 +319,23 @@ namespace ViberBotWebApp.ActionsProvider
                     message.text = "Okay, I waiting the match result ...";
                     _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
-                    message.keyboard = new(buttons.Result);
+                    message.keyboard = new(
+                                buttons.Zero,
+                                buttons.One,
+                                buttons.Two,
+                                buttons.Three,
+                                buttons.Four,
+                                buttons.Five,
+                                buttons.Six,
+                                buttons.Seven,
+                                buttons.Eight,
+                                buttons.Nine,
+                                buttons.Ten,
+                                buttons.Eleven);
+
                     break;
 
-                case "no_no_no":
+
                 case "close_the_game":
                     _stateManager.ResetCounterMatch(data.Sender.id);
                     message.text = "see you next time!";
@@ -322,9 +359,13 @@ namespace ViberBotWebApp.ActionsProvider
                             buttons.Seven,
                             buttons.Eight,
                             buttons.Nine,
-                            buttons.Ten, 
+                            buttons.Ten,
                             buttons.Eleven);
 
+                    break;
+
+                case "#resetmystate":
+                    _stateManager.SetPlayerState(data.Sender.id, State.StandBy);
                     break;
 
                 case "#getallplayerstatus":
@@ -376,7 +417,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var totalPerfomance = await _dbController.GetPerfomance(data.Sender.id);
                     if (!string.IsNullOrEmpty(totalPerfomance))
                     {
-                        message.text = $"Your perfomance is {totalPerfomance}";
+                        message.text = $"Your performance is {totalPerfomance}";
                     }
                     else
                     {
@@ -391,24 +432,33 @@ namespace ViberBotWebApp.ActionsProvider
 
                     var state = _stateManager.GetPlayerState(data.Sender.id);
 
-                    var todayPerfomance = string.Empty;
 
                     switch (state.ToString())
                     {
                         case "WinrateStatistics":
-                            todayPerfomance = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
-                            if (!string.IsNullOrEmpty(todayPerfomance))
+                            var todayWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
+                            var totalWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
+                            var wrlenght = todayWinrate.IndexOf('.');
+                            var wrTotalLenght = totalWinrate.IndexOf('.');
+                            if (!string.IsNullOrEmpty(todayWinrate))
                             {
-                                var winrate_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
-                                message.text = $"Today your win rate is {winrate_percent}%";
+                                var winrate_percent = todayWinrate.Substring(0, wrlenght + 3);
+                                var totalwinrate_percent = totalWinrate.Substring(0, wrTotalLenght + 3);
+                                message.text = $"Today your winrate is *{winrate_percent}%*\nAnd your winrate for all period is *{totalwinrate_percent}%*";
                             }
                             break;
                         case "PerfomanceStatics":
-                            todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            // TODO: refactor GetPerfomanceToday to GetPerfomance with date as parameter
+
+                            var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
+                            var allPeriodPerfomance = await _dbController.GetPerfomance(data.Sender.id);
+                            var prlenght = todayPerfomance.IndexOf('.');
+                            var allPeriodPerfLenght = allPeriodPerfomance.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
-                                var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
-                                message.text = $"Your perfomance for today is {perfomance_percent}%";
+                                var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
+                                var allperfomance_percent = allPeriodPerfomance.Substring(0, allPeriodPerfLenght + 3);
+                                message.text = $"Your performance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{perfomance_percent}%*";
                             }
                             break;
                         case "OpponentPerfomanceStatistics":
@@ -417,12 +467,12 @@ namespace ViberBotWebApp.ActionsProvider
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, todayPerfomance.IndexOf('.') + 3);
-                                message.text = $"{nameOpp}'s perfomance for today is {perfomance_percent}%";
+                                message.text = $"{nameOpp}'s performance for today is {perfomance_percent}%";
                             }
                             break;
                     }
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.MainMenu, buttons.Statistics);
 
                     _stateManager.SetPlayerState(data.Sender.id, State.Unstate);
 
@@ -432,13 +482,24 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperstatisticsallperiod":
-                    // TODO: check player state (implement method in UserState class)
+                    if (_stateManager.GetPlayerState(senderId) == State.WinrateStatistics)
+                    {
+                        var winrate = await _dbController.GetWinRateUser(senderId, DateTime.Parse("1/1/2001"));
+                        var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
+                        message.text = $"Your Match *WinRate* for all period is {winratePercent}%";
 
-                    var winrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
-                    var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
-                    message.text = $"Your Match WinRate is {winratePercent}%";
+                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
 
-                    message.keyboard = new(buttons.MainMenu);
+                    }
+                    else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
+                    {
+                        var perfomance = await _dbController.GetPerfomance(senderId);
+                        var perfomancePercent = perfomance.Substring(0, perfomance.IndexOf('.') + 3);
+                        message.text = $"Your *performance* for all period is {perfomancePercent}%";
+
+                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
+                    }
+
 
 
                     break;
@@ -453,17 +514,33 @@ namespace ViberBotWebApp.ActionsProvider
 
                     break;
 
-                case var date when DateTime.TryParse(date, out DateTime _):
-                    message.text = $"Unfortunately I have no data for {date}";
+                case var date when DateTime.TryParse(date, out DateTime currentDate):
+                    var text = $"Unfortunately I have no data for {date}";
+                    var shandDate = HelperActions.GetShorthandDateTime(currentDate);
 
-                    // TODO: check th player state
-
-                    var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, DateTime.Parse(date));
-                    if (!string.IsNullOrEmpty(dayPerfomance))
+                    if (_stateManager.GetPlayerState(senderId) == State.WinrateDay)
                     {
-                        message.text = $"Your perfomance for {date} is {dayPerfomance}";
+                        var winrateResult = await _dbController.GetWinRateUser(senderId, currentDate);
+                        if (!string.IsNullOrWhiteSpace(winrateResult))
+                        {
+                            var winRateResultPercent = winrateResult.Substring(0, winrateResult.IndexOf('.') + 3);
+
+                            text = $"Your *WinRate* for {shandDate} is {winRateResultPercent}%";
+                        }
+                    }
+                    else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceDay)
+                    {
+                        var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, currentDate);
+                        if (!string.IsNullOrEmpty(dayPerfomance))
+                        {
+                            var perfomaneResultPercent = dayPerfomance.Substring(0, dayPerfomance.IndexOf('.') + 3);
+
+                            text = $"Your *Performance* for {shandDate} is {perfomaneResultPercent}%";
+                        }
                     }
 
+
+                    message.text = text;
                     message.keyboard = new(buttons.MainMenu);
 
 
@@ -472,11 +549,23 @@ namespace ViberBotWebApp.ActionsProvider
                 default:
                     if (_stateManager.GetPlayerState(data.Sender.id) == State.OpponentName)
                     {
-                        message.text = "Deal! I note your opponent's name";
+                        message.text = "Deal! I note your opponent's name and waiting your result ...";
                         _stateManager.SetOpponentName(data.Sender.id, data.Message.Text);
                         _stateManager.SetPlayerState(data.Sender.id, State.InGame);
 
-                        message.keyboard = new(buttons.Result);
+                        message.keyboard = new(
+                            buttons.Zero,
+                            buttons.One,
+                            buttons.Two,
+                            buttons.Three,
+                            buttons.Four,
+                            buttons.Five,
+                            buttons.Six,
+                            buttons.Seven,
+                            buttons.Eight,
+                            buttons.Nine,
+                            buttons.Ten,
+                            buttons.Eleven);
 
 
                     }

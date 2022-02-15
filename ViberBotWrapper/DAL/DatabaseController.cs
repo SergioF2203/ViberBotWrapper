@@ -209,7 +209,7 @@ namespace ViberBotWebApp.DAL
                     opScore += dataReader.GetByte(4);
                 }
 
-                result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+                result = (playerScore * 100 / (playerScore + opScore)).ToString();
 
             }
             catch (Exception ex)
@@ -241,8 +241,8 @@ namespace ViberBotWebApp.DAL
 
                 var dataReader = sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
 
-                var playerScore = 0;
-                var opScore = 0;
+                var playerScore = 0d;
+                var opScore = 0d;
 
                 if (dataReader.HasRows)
                 {
@@ -252,7 +252,7 @@ namespace ViberBotWebApp.DAL
                         opScore += dataReader.GetByte(4);
                     }
 
-                    result = (playerScore * 100 / (playerScore + opScore)).ToString() + "%";
+                    result = (playerScore * 100 / (playerScore + opScore)).ToString();
                 }
 
 
@@ -317,9 +317,6 @@ namespace ViberBotWebApp.DAL
 
         public async Task<string> GetPerfomanceToday(string id)
         {
-            //var fulldate = DateTime.Now.ToString();
-            //var date = fulldate.Substring(0, fulldate.IndexOf(' '));
-
             var date = HelperActions.GetShorthandDateTime(DateTime.Now);
             return await GetPerfomanceDay(id, DateTime.Parse(date));
         }
@@ -348,6 +345,7 @@ namespace ViberBotWebApp.DAL
             }
             catch (Exception ex)
             {
+                // TODO: exception divide by zero == wrong date format
                 await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
             }
             finally
@@ -357,8 +355,6 @@ namespace ViberBotWebApp.DAL
 
             return winrate;
         }
-
-
 
         public async Task<int> RemoveEntryById(string id)
         {
@@ -389,6 +385,42 @@ namespace ViberBotWebApp.DAL
             }
 
             return rowAffected;
+        }
+
+        public async Task<List<string>> GetLastOpponentName(string id)
+        {
+            var result = new List<string>();
+
+            try
+            {
+                _connection.Open();
+
+                SqlCommand sqlCommand = new();
+                sqlCommand.Connection = _connection;
+
+                sqlCommand.CommandText = $"SELECT DISTINCT TOP 4 OpponentName FROM Results WHERE UserId='{id}'";
+
+                var reader = sqlCommand.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(0));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await HelperActions.WriteToFile("viber_bot_exeption_log", ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return result;
         }
     }
 }

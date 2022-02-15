@@ -13,13 +13,12 @@ namespace ViberBotWebApp.Enums
         OpponentResult,
         OpponentName,
         Statistics,
-        DayPerfomance,
+        PerfomanceDay,
         Unstate,
         WinrateStatistics,
         PerfomanceStatics,
         PerfomanceOpponentName,
         OpponentPerfomanceStatistics,
-        Perfomancestatics,
         PerfomanceByOpName,
         WinrateByOpName,
         PerfomanceCustomDate,
@@ -27,7 +26,9 @@ namespace ViberBotWebApp.Enums
         PerfomanceWeek,
         WinrateWeek,
         PerfomanceMonth,
-        WinrateMonth
+        WinrateMonth,
+        WinrateDay,
+        TodayResultStatistics
     }
 
 }

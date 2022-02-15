@@ -39,7 +39,7 @@ namespace ViberBotWebApp.Controllers
         [HttpGet]
         public IActionResult WelcomeMessageGet()
         {
-            return Ok(new() { });
+            return Ok("The Bot has started ...");
         }
 
         [HttpPost]
