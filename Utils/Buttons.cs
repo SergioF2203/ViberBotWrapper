@@ -19,7 +19,7 @@ namespace Utils
         }
 
 
-        public Button Today
+        /*public Button Today
         {
             get
             {
@@ -33,9 +33,9 @@ namespace Utils
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
-        public Button AllPeriod
+        /*public Button AllPeriod
         {
             get
             {
@@ -65,9 +65,9 @@ namespace Utils
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
-        public Button TheDay
+        /*public Button TheDay
         {
             get
             {
@@ -81,9 +81,9 @@ namespace Utils
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
-        public Button Week
+        /*public Button Week
         {
             get
             {
@@ -113,9 +113,9 @@ namespace Utils
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
-        public Button MainMenu
+        /*public Button MainMenu
         {
             get
             {
@@ -129,7 +129,7 @@ namespace Utils
                     BgColor = "#735ff2"
                 };
             }
-        }
+        }*/
 
         public Button Match
         {
@@ -809,11 +809,11 @@ namespace Utils
             {
                 var btn = new Buttons();
                 return new List<Button>() {
-                    btn.AllPeriod,
-                    btn.Day,
-                    btn.Week,
-                    btn.Month,
-                    btn.Year
+                    btn.CreateNewButton("getplayerperstatisticsallperiod", "All period", 3),
+                    btn.CreateNewButton("getpdaystatistics", "Day", 3),
+                    btn.CreateNewButton("getpweekstatistics", "Week", 3),
+                    btn.CreateNewButton("getpmonthstatistics", "Month", 3),
+                    btn.CreateNewButton("statisticsyear", "Year", 3)
                 };
 
             }

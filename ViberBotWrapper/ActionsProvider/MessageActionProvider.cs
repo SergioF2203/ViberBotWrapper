@@ -108,7 +108,7 @@ namespace ViberBotWebApp.ActionsProvider
                         var temp = Buttons.CustomButton(name, 6);
                         buttonsList.Add(temp);
                     }
-                    buttonsList.Add(buttons.MainMenu);
+                    buttonsList.Add(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
                     message.keyboard = new(buttonsList.ToArray());
 
                     break;
@@ -145,7 +145,9 @@ namespace ViberBotWebApp.ActionsProvider
                 case "getpdaystatistics":
                     message.text = "What the day your choise?";
 
-                    message.keyboard = new(buttons.Today, buttons.TheDay);
+                    message.keyboard = new(
+                        buttons.CreateNewButton("getplayerperstatisticstoday", "\uD83D\uDCC6 Today", 3),
+                        buttons.CreateNewButton("getcustomdaystatistics", "The day", 3));
 
                     break;
 
@@ -163,7 +165,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
                     message.text = $"Please enter the date (mm/dd/yyyy pattern) you want to know your {winrwteOrPerfomanceText}";
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
 
                     break;
 
@@ -375,7 +377,7 @@ namespace ViberBotWebApp.ActionsProvider
                         }
                     }
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
                     break;
 
                 case "#getplayerscount":
@@ -405,7 +407,7 @@ namespace ViberBotWebApp.ActionsProvider
 
                     message.text = data.Message.Tracking_Data;
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
 
                     break;
 
@@ -472,7 +474,7 @@ namespace ViberBotWebApp.ActionsProvider
                             break;
                     }
 
-                    message.keyboard = new(buttons.MainMenu, buttons.Statistics);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6), buttons.Statistics);
 
                     _stateManager.SetPlayerState(data.Sender.id, State.Unstate);
 
@@ -488,7 +490,7 @@ namespace ViberBotWebApp.ActionsProvider
                         var winratePercent = winrate.Substring(0, winrate.IndexOf('.') + 3);
                         message.text = $"Your Match *WinRate* for all period is {winratePercent}%";
 
-                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
+                        message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6), buttons.Statistics);
 
                     }
                     else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
@@ -497,7 +499,7 @@ namespace ViberBotWebApp.ActionsProvider
                         var perfomancePercent = perfomance.Substring(0, perfomance.IndexOf('.') + 3);
                         message.text = $"Your *performance* for all period is {perfomancePercent}%";
 
-                        message.keyboard = new(buttons.MainMenu, buttons.Statistics);
+                        message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6), buttons.Statistics);
                     }
 
 
@@ -509,7 +511,7 @@ namespace ViberBotWebApp.ActionsProvider
                     var winratePercentToday = winratetoday.Substring(0, winratetoday.IndexOf('.') + 3);
                     message.text = $"Today, Your Match WinRate is {winratePercentToday}%";
 
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
 
 
                     break;
@@ -541,7 +543,7 @@ namespace ViberBotWebApp.ActionsProvider
 
 
                     message.text = text;
-                    message.keyboard = new(buttons.MainMenu);
+                    message.keyboard = new(buttons.CreateNewButton("close_the_game", "\uD83D\uDC3E Main Menu", 6));
 
 
                     break;
@@ -581,13 +583,10 @@ namespace ViberBotWebApp.ActionsProvider
                             DefaultHeight = false,
                             Buttons = new()
                             {
-                                buttons.Today,
-                                buttons.AllPeriod,
-                                buttons.Day,
-                                buttons.Week,
-                                buttons.Month
+                                buttons.CreateNewButton("getplayerperstatisticstoday", "\uD83D\uDCC6 Today", 3)
                             }
                         };
+                        message.keyboard.Buttons.AddRange(buttons.PeriodKeyboard);
                     }
                     else
                     {
