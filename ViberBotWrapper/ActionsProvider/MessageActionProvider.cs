@@ -439,6 +439,8 @@ namespace ViberBotWebApp.ActionsProvider
                             var todayWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Now);
                             var totalWinrate = await _dbController.GetWinRateUser(data.Sender.id, DateTime.Parse("1/1/2001"));
                             var wrlenght = todayWinrate.IndexOf('.');
+                            if (todayWinrate.Length == 3 && wrlenght == -1)
+                                wrlenght = 0;
                             var wrTotalLenght = totalWinrate.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayWinrate))
                             {
@@ -453,12 +455,14 @@ namespace ViberBotWebApp.ActionsProvider
                             var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
                             var allPeriodPerfomance = await _dbController.GetPerfomance(data.Sender.id);
                             var prlenght = todayPerfomance.IndexOf('.');
+                            if (todayPerfomance.Length == 3 && prlenght == -1)
+                                prlenght = 0;
                             var allPeriodPerfLenght = allPeriodPerfomance.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
                                 var perfomance_percent = todayPerfomance.Substring(0, prlenght + 3);
                                 var allperfomance_percent = allPeriodPerfomance.Substring(0, allPeriodPerfLenght + 3);
-                                message.text = $"Your performance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{perfomance_percent}%*";
+                                message.text = $"Your performance for today is *{perfomance_percent}%*\nAnd your perfomance for all period is *{allperfomance_percent}%*";
                             }
                             break;
                         case "OpponentPerfomanceStatistics":
