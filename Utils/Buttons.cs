@@ -1,13 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ViberBotWebApp.Models;
+﻿using System.Collections.Generic;
+using Models;
 
-namespace ViberBotWebApp.Buttons
+namespace Utils
 {
     public class Buttons
     {
+        public Button CreateNewButton(string command_text, string message, int columnSize)
+        {
+            return new()
+            {
+                ActionType = "reply",
+                ActionBody = command_text,
+                Text = $"<font color=\"#fefff6\">{message}</font>",
+                TextSize = "regular",
+                Columns = columnSize,
+                BgColor = "#735ff2"
+            };
+        }
+
+
         public Button Today
         {
             get
@@ -23,6 +34,7 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
         public Button AllPeriod
         {
             get
@@ -86,6 +98,7 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
+
         public Button Month
         {
             get
@@ -101,7 +114,6 @@ namespace ViberBotWebApp.Buttons
                 };
             }
         }
-
 
         public Button MainMenu
         {
@@ -538,7 +550,6 @@ namespace ViberBotWebApp.Buttons
             }
         }
 
-
         public Button PerfomanceDay
         {
             get
@@ -807,6 +818,5 @@ namespace ViberBotWebApp.Buttons
 
             }
         }
-
     }
 }

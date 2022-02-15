@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using ViberBotWebApp.ActionsProvider;
-using ViberBotWebApp.Buttons;
+using Utils;
 using ViberBotWebApp.DAL;
-using ViberBotWebApp.Helpers;
-using ViberBotWebApp.Models;
-using ViberBotWebApp.Models.CallbackData;
-using static System.Net.Mime.MediaTypeNames;
+using Models.CallbackData;
 
 namespace ViberBotWebApp.Controllers
 {
