@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ViberBotWebApp.Enums;
+﻿using Models.Enums;
 
-namespace ViberBotWebApp.Models
+namespace Models
 {
     public class UserState
     {

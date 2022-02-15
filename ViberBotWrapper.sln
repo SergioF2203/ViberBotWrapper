@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViberBotWebApp", "ViberBotWrapper\ViberBotWebApp.csproj", "{FAABA9A4-B853-40E9-9E7C-2422DF311541}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{46D8B14B-D343-46FD-B643-5CFD7B895E1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{06F3C74D-9FAD-4744-B9FB-92B42B49D501}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{FAABA9A4-B853-40E9-9E7C-2422DF311541}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAABA9A4-B853-40E9-9E7C-2422DF311541}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAABA9A4-B853-40E9-9E7C-2422DF311541}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46D8B14B-D343-46FD-B643-5CFD7B895E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D8B14B-D343-46FD-B643-5CFD7B895E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D8B14B-D343-46FD-B643-5CFD7B895E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D8B14B-D343-46FD-B643-5CFD7B895E1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F3C74D-9FAD-4744-B9FB-92B42B49D501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F3C74D-9FAD-4744-B9FB-92B42B49D501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F3C74D-9FAD-4744-B9FB-92B42B49D501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F3C74D-9FAD-4744-B9FB-92B42B49D501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Models;
+using Models.CallbackData;
+using Utils;
 using ViberBotWebApp.DAL;
-using ViberBotWebApp.Enums;
-using ViberBotWebApp.Helpers;
-using ViberBotWebApp.Models;
-using ViberBotWebApp.Models.CallbackData;
-using static System.Net.Mime.MediaTypeNames;
+using Models.Enums;
 
 namespace ViberBotWebApp.ActionsProvider
 {
@@ -75,7 +71,7 @@ namespace ViberBotWebApp.ActionsProvider
                 _stateManager.AddPlayer(data.Sender.id);
             }
 
-            Buttons.Buttons buttons = new();
+            Buttons buttons = new();
 
             SendedMessage message = new()
             {
@@ -103,13 +99,13 @@ namespace ViberBotWebApp.ActionsProvider
 
                     message.text = "Enter your opponent name of select bellow or get back:\n";
                     message.text += $"Your state is: {_stateManager.GetPlayerState(data.Sender.id)}";
-                    _stateManager.SetPlayerState(data.Sender.id, Enums.State.OpponentName);
+                    _stateManager.SetPlayerState(data.Sender.id, State.OpponentName);
 
                     var opponentsName = _dbController.GetLastOpponentName(data.Sender.id).Result;
                     var buttonsList = new List<Button>();
                     foreach (var name in opponentsName)
                     {
-                        var temp = Buttons.Buttons.CustomButton(name, 6);
+                        var temp = Buttons.CustomButton(name, 6);
                         buttonsList.Add(temp);
                     }
                     buttonsList.Add(buttons.MainMenu);
