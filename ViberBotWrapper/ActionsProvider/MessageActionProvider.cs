@@ -410,7 +410,7 @@ namespace ViberBotWebApp.ActionsProvider
                     break;
 
                 case "getplayerperfomance":
-                    var totalPerfomance = await _dbController.GetPerfomance(data.Sender.id);
+                    var totalPerfomance = await _dbController.GetUserPerformance(data.Sender.id);
                     if (!string.IsNullOrEmpty(totalPerfomance))
                     {
                         message.text = $"Your performance is {totalPerfomance}";
@@ -437,6 +437,8 @@ namespace ViberBotWebApp.ActionsProvider
                             var wrlenght = todayWinrate.IndexOf('.');
                             if (todayWinrate.Length == 3 && wrlenght == -1)
                                 wrlenght = 0;
+                            else if (todayWinrate.Length == 4)
+                                wrlenght = 1;
                             var wrTotalLenght = totalWinrate.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayWinrate))
                             {
@@ -449,10 +451,13 @@ namespace ViberBotWebApp.ActionsProvider
                             // TODO: refactor GetPerfomanceToday to GetPerfomance with date as parameter
 
                             var todayPerfomance = await _dbController.GetPerfomanceToday(data.Sender.id);
-                            var allPeriodPerfomance = await _dbController.GetPerfomance(data.Sender.id);
+                            var allPeriodPerfomance = await _dbController.GetUserPerformance(data.Sender.id);
+
                             var prlenght = todayPerfomance.IndexOf('.');
                             if (todayPerfomance.Length == 3 && prlenght == -1)
                                 prlenght = 0;
+                            else if (todayPerfomance.Length == 4)
+                                prlenght = 1;
                             var allPeriodPerfLenght = allPeriodPerfomance.IndexOf('.');
                             if (!string.IsNullOrEmpty(todayPerfomance))
                             {
@@ -493,7 +498,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
                     else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceStatics)
                     {
-                        var perfomance = await _dbController.GetPerfomance(senderId);
+                        var perfomance = await _dbController.GetUserPerformance(senderId);
                         var perfomancePercent = perfomance.Substring(0, perfomance.IndexOf('.') + 3);
                         message.text = $"Your *performance* for all period is {perfomancePercent}%";
 
@@ -530,7 +535,7 @@ namespace ViberBotWebApp.ActionsProvider
                     }
                     else if (_stateManager.GetPlayerState(senderId) == State.PerfomanceDay)
                     {
-                        var dayPerfomance = await _dbController.GetPerfomanceDay(data.Sender.id, currentDate);
+                        var dayPerfomance = await _dbController.GetDayPerformance(data.Sender.id, currentDate);
                         if (!string.IsNullOrEmpty(dayPerfomance))
                         {
                             var perfomaneResultPercent = dayPerfomance.Substring(0, dayPerfomance.IndexOf('.') + 3);

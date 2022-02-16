@@ -185,7 +185,7 @@ namespace ViberBotWebApp.DAL
             return result;
         }
 
-        public async Task<string> GetPerfomance(string id)
+        public async Task<string> GetUserPerformance(string id)
         {
             var result = string.Empty;
 
@@ -224,7 +224,7 @@ namespace ViberBotWebApp.DAL
             return result;
         }
 
-        public async Task<string> GetPerfomanceDay(string id, DateTime day)
+        public async Task<string> GetDayPerformance(string id, DateTime day)
         {
             var result = string.Empty;
             var nowDay = HelperActions.GetUnixTimeStamp(day);
@@ -317,7 +317,7 @@ namespace ViberBotWebApp.DAL
         public async Task<string> GetPerfomanceToday(string id)
         {
             var date = HelperActions.GetShorthandDateTime(DateTime.Now);
-            return await GetPerfomanceDay(id, DateTime.Parse(date));
+            return await GetDayPerformance(id, DateTime.Parse(date));
         }
 
         public async Task<string> GetOpponentPerfomanceToday(string id)
